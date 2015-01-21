@@ -43,8 +43,12 @@ handle_gm_result()
 		add_points_based_on_rounds(); // Give points based on start round, just like in BO2
 	}
 	level.gm_result = self.gm_result; // Store the gamemode ID in here, for use in scripts
-	if(self.gm_result == 2) maps\_fs_turned::main(); // Execute turned
-	if(self.gm_result == 3) maps\_fs_scavenger_gm::main();	// Execute Scavenger
+	if(self.gm_result == 1)
+		maps\_fs_gungame::main(); // Execute Gungame
+	else if(self.gm_result == 2)
+		maps\_fs_turned::main(); // Execute turned
+	else if(self.gm_result == 3)
+		maps\_fs_scavenger_gm::main();	// Execute Scavenger
 }
 
 add_points_based_on_rounds()

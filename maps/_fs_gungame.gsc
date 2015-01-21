@@ -123,36 +123,6 @@ init_weapon_list()
 	level._gungame_weapons = [];
 	level._gungame_weapons_kills = [];
 	//add_weapon( weapon file name here, how many kills do you need to get with that gun (includes all before) to rank up)
-	/*
-	add_weapon("browning_zm",20);
-	add_weapon("tac45",55);
-	add_weapon("mp9",75);
-	add_weapon("m14",105);
-	add_weapon("vector",130);
-	add_weapon("ak47_zm",150);
-	add_weapon("honeybadger",180);
-	add_weapon("acr",205);
-	add_weapon("mp5",235);
-	add_weapon("m72_law",250);
-	add_weapon("s12_zm",280);
-	//add_weapon("mw2_aug",325);
-	add_weapon("p90",360);
-	add_weapon("m27",400);
-	add_weapon("arx_160",440);
-	//add_weapon("hamr",490);
-	add_weapon("striker",535);
-	//add_weapon("mw3_ak74u",570);
-	add_weapon("msr",595);
-	add_weapon("magnum",615);
-	//add_weapon("mw2_spas12",645);
-	add_weapon("mg36",690);
-	add_weapon("ksg_z",720);
-	add_weapon("cheytac",745);
-	add_weapon("raygun_mark2",795);
-	//add_weapon("minigun",845);
-	add_weapon("scavenger",895);
-	//add_weapon("slip_gun",945);
-	*/
 	add_weapon("fs_colt",20);
 	add_weapon("fs_m4",40);
 }
