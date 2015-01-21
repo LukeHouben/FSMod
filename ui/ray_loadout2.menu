@@ -1,0 +1,414 @@
+// CONSOLE SP - Main
+
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+#include "ui/mission_select/missiondefs.menu"
+
+#undef	SIGNED_IN_RECT
+#define SIGNED_IN_RECT			-350 60 250 15
+
+#define CHOICE_SIZE_X			150
+#define CHOICE_SIZE_Y			22
+
+#define CHOICE_X_START			0
+#define CHOICE_Y_START			120
+
+#undef	CHOICE_Y_START
+#define CHOICE_Y_START		50//106//120
+#undef	CHOICE_X_START
+#define CHOICE_X_START			30
+
+#define CHOICE_SEP_OFFSET_Y		-2
+
+#define CHOICE_GROUP			"main"
+#undef CHOICE_SEP_1
+#define CHOICE_SEP_1			3
+#define CHOICE_SEP_2			6
+
+#define CLEARUIHINT	exec "set ui_hint_text @NULL_EMPTY"; hide "desc_arrow"
+
+
+
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+#include "ui/online_status.inc"
+{
+	assetGlobalDef
+	{
+		fadeClamp		1.0						// sets the fadeup alpha
+		fadeCycle		1						// how often fade happens in milliseconds
+		fadeAmount		0.1						// amount to adjust alpha per cycle
+	}
+	
+
+
+	menuDef
+	{
+		name			victoryscreen
+		fullScreen		1
+		rect			0 0 640 480
+		focusColor		COLOR_FOCUSED
+		soundloop 		"music_mainmenu"
+		style			WINDOW_STYLE_EMPTY
+		onOpen
+		{
+			CLEARUIHINT
+			setlocalVarInt pick_item 0;
+			setLocalVarString pick_item_type "none"; 
+			setLocalVarString aftermath_weapon1 "hud_knife_bo2"
+			setLocalVarString aftermath_weapon2 "hud_1911_bo2"
+			setLocalVarString loadout_perk "specialty_nothing"
+			setLocalVarString loadout_perk2 "specialty_nothing"
+			setLocalVarString loadout_perk3 "specialty_nothing"
+			setLocalVarString loadout_perk_2 "specialty_nothing"
+			setLocalVarString loadout_perk2_2 "specialty_nothing"
+			setLocalVarString loadout_perk3_2 "specialty_nothing"
+			setLocalVarString loadout_lethal "specialty_nothing"
+			setLocalVarString loadout_tactical "specialty_nothing"
+			setLocalVarInt ui_loadout_index_highlight 0;
+			setLocalVarInt ui_loadout_index_highlight2 0;
+			setLocalVarInt ui_loadout_index_highlight3 0;
+			exec "set loadout_primary 0";
+			exec "set loadout_secondary 1";
+			exec "set loadout_perk 0";
+			exec "set loadout_perk2 0";
+			exec "set loadout_perk3 0";
+			exec "set loadout_perk_2 0";
+			exec "set loadout_perk2_2 0";
+			exec "set loadout_perk3_2 0";
+		}
+		onFocus
+		{
+
+		}
+		onEsc
+		{
+			close victoryscreen;
+		}
+		
+
+		#undef LOADOUT_BOX_ORIGIN_X
+		#undef LOADOUT_BOX_ORIGIN_Y
+		#define LOADOUT_BOX_ORIGIN_X -256
+		#define LOADOUT_BOX_ORIGIN_Y -64
+		#include "ui/ray_loadout_box.inc"
+
+		#define PLAYER_CURRENT_XP (stat( 2301 ))
+
+		#undef LD_BTN_ORIGIN_X
+		#undef LD_BTN_ORIGIN_Y
+		#define LD_BTN_ORIGIN_X 0
+		#define LD_BTN_ORIGIN_Y 0
+		#define LD_BTN_SPACING_X 185
+		#define LD_BTN_SPACING_Y 18
+		#include "ui/ray_loadout_button.inc"
+	
+		//DUKIP - Replace background with your own material!
+		/*
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			rect				FULLSCREEN_WIDE
+			background		"nzr_main_menu"
+			forecolor		0.6 0.6 0.6 0.7
+			visible			1
+			decoration
+		}*/
+
+		// background
+		#include "ui/bg.inc"
+
+		itemDef
+		{
+			name		quit_loadout
+			type		ITEM_TYPE_BUTTON
+			style		WINDOW_STYLE_FILLED
+			textstyle	ITEM_TEXTSTYLE_SHADOWED
+			rect		32 460 640 24 1 1
+			text		"@MENU_BACK"
+			forecolor	1 1 1 1
+			textfont	9
+			textalign	ITEM_ALIGN_CENTER
+			textalignY	18
+			textscale	0.375
+			visible		when(localVarInt(pick_item) != 1)
+			mouseEnter   
+			{  
+				play "mouse_over";  
+			}
+			action  
+			{
+				play "mouse_click";
+				close victoryscreen; 
+			} 
+		}
+		itemDef
+		{
+			name		apply_loadout
+			type		ITEM_TYPE_BUTTON
+			style		WINDOW_STYLE_FILLED
+			textstyle	ITEM_TEXTSTYLE_SHADOWED
+			rect		32 440 640 24 1 1
+			text		"APPLY"
+			forecolor	1 1 1 1
+			textfont	9
+			textalign	ITEM_ALIGN_CENTER
+			textalignY	18
+			textscale	0.375
+			visible		when(localVarInt(pick_item) != 1)
+			mouseEnter   
+			{  
+				play "mouse_over";  
+			}
+			action  
+			{
+				play "mouse_click";
+				exec "set ui_autoContinue 1";
+				exec "devmap loadout_apply";
+			} 
+		}
+
+
+		#define OPEN_PRIMARY \
+			setlocalVarInt pick_item 1; \
+			setLocalVarString pick_item_type "primary"; \
+			setLocalVarInt ui_loadout_index_highlight 0; \
+			setLocalVarInt ui_loadout_index_highlight2 0; \
+			setLocalVarInt ui_loadout_index_highlight3 0; 
+		#define OPEN_SECONDARY \
+			setlocalVarInt pick_item 1; \
+			setLocalVarString pick_item_type "secondary"; \
+			setLocalVarInt ui_loadout_index_highlight 0; \
+			setLocalVarInt ui_loadout_index_highlight2 0; \ 
+			setLocalVarInt ui_loadout_index_highlight3 0; 
+		#define OPEN_PERK \
+			setlocalVarInt pick_item 1; \
+			setLocalVarString pick_item_type "perk"; \
+			setLocalVarInt ui_loadout_index_highlight 0; \
+			setLocalVarInt ui_loadout_index_highlight2 0; \
+			setLocalVarInt ui_loadout_index_highlight3 0; 
+		#define OPEN_PERK2 \
+			setlocalVarInt pick_item 1; \
+			setLocalVarString pick_item_type "perk2"; \
+			setLocalVarInt ui_loadout_index_highlight 0; \
+			setLocalVarInt ui_loadout_index_highlight2 0; \
+			setLocalVarInt ui_loadout_index_highlight3 0; 
+		#define OPEN_PERK3 \
+			setlocalVarInt pick_item 1; \
+			setLocalVarString pick_item_type "perk3"; \
+			setLocalVarInt ui_loadout_index_highlight 0; \
+			setLocalVarInt ui_loadout_index_highlight2 0; \
+			setLocalVarInt ui_loadout_index_highlight3 0; 
+		#define OPEN_PERK_2 \
+			setlocalVarInt pick_item 1; \
+			setLocalVarString pick_item_type "perk_2"; \
+			setLocalVarInt ui_loadout_index_highlight 0; \
+			setLocalVarInt ui_loadout_index_highlight2 0; \
+			setLocalVarInt ui_loadout_index_highlight3 0;
+		#define OPEN_PERK2_2 \
+			setlocalVarInt pick_item 1; \
+			setLocalVarString pick_item_type "perk2_2"; \
+			setLocalVarInt ui_loadout_index_highlight 0; \
+			setLocalVarInt ui_loadout_index_highlight2 0; \
+			setLocalVarInt ui_loadout_index_highlight3 0;
+		#define OPEN_PERK3_2 \
+			setlocalVarInt pick_item 1; \
+			setLocalVarString pick_item_type "perk3_2"; \
+			setLocalVarInt ui_loadout_index_highlight 0; \
+			setLocalVarInt ui_loadout_index_highlight2 0; \
+			setLocalVarInt ui_loadout_index_highlight3 0;
+		#define OPEN_TACTICAL \
+			setlocalVarInt pick_item 1; \
+			setLocalVarString pick_item_type "tactical"; \
+			setLocalVarInt ui_loadout_index_highlight 0; \
+			setLocalVarInt ui_loadout_index_highlight2 0; \
+			setLocalVarInt ui_loadout_index_highlight3 0;
+		#define OPEN_LETHAL \
+			setlocalVarInt pick_item 1; \
+			setLocalVarString pick_item_type "lethal"; \
+			setLocalVarInt ui_loadout_index_highlight 0; \
+			setLocalVarInt ui_loadout_index_highlight2 0; \
+			setLocalVarInt ui_loadout_index_highlight3 0;
+
+
+		CHOICE_MENU_TITLE( "LOADOUT" )
+
+		// draws signin status
+		SIGNIN_STATUS
+		ONLINE_OFFLINE_BUTTON
+
+		//MENU_SP_BUTTON( NUMBER, rectXArg, rectYArg, IMAGE HIGHLIGHTED, IMAGE NOT HIGHLIGHTED, TEXT ON TOP, WHAT TO DO WHEN PRESSED, DESCRIPTION, backArg, groupArg ) \
+		//MENU_SP_BUTTON( indexArg, rectXArg, rectYArg, imgArg, blurArg, textArg, actionArg, descArg, backArg, groupArg )
+		//For button 2, I had to reverse the images for some reason the materials were being set wrong.
+		//MENU_LOADOUT_BOX(1, -275, LOADOUT_BOX_ORIGIN_Y , localVarString(aftermath_weapon1), localVarString(aftermath_weapon1), "PRIMARY", SET_DEFAULT_PRIMARY, "", "1", "main" , 1, 0)   
+		//MENU_LOADOUT_BOX(2, -90, LOADOUT_BOX_ORIGIN_Y , localVarString(aftermath_weapon2), localVarString(aftermath_weapon2), "SECONDARY", SET_DEFAULT_SECONDARY, "", "2", "main" ,1,0)
+		//MENU_LOADOUT_BOX(3, 95, LOADOUT_BOX_ORIGIN_Y , localVarString(loadout_perk), localVarString(loadout_perk), "PERK", SET_DEFAULT_PERK, "", "3", "main" ,1,0)
+
+		MENU_LOADOUT_BOX2(1, LOADOUT_BOX_ORIGIN_X, LOADOUT_BOX_ORIGIN_Y , localVarString(aftermath_weapon1), localVarString(aftermath_weapon1), "PRIMARY", OPEN_PRIMARY;, "", "1", "main" ,1,0)
+		MENU_LOADOUT_BOX2(2, LOADOUT_BOX_ORIGIN_X, LOADOUT_BOX_ORIGIN_Y+128 , localVarString(aftermath_weapon2), localVarString(aftermath_weapon2), "SECONDARY", OPEN_SECONDARY;, "", "2", "main" ,1,0)
+		MENU_LOADOUT_BOX_PERK(3, (LOADOUT_BOX_ORIGIN_X+274), LOADOUT_BOX_ORIGIN_Y , localVarString(loadout_perk), localVarString(loadout_perk), "TIER 1", OPEN_PERK;, "", "3", "main" ,1,0)
+		MENU_LOADOUT_BOX_PERK(4, (LOADOUT_BOX_ORIGIN_X+274), LOADOUT_BOX_ORIGIN_Y+128 , localVarString(loadout_perk2), localVarString(loadout_perk2), "TIER 2", OPEN_PERK2;, "", "4", "main" ,1,0)
+		MENU_LOADOUT_BOX_PERK(5, (LOADOUT_BOX_ORIGIN_X+274), LOADOUT_BOX_ORIGIN_Y+256 , localVarString(loadout_perk3), localVarString(loadout_perk3), "TIER 3", OPEN_PERK3;, "", "5", "main" ,1,0)
+		MENU_LOADOUT_BOX_PERK(6, (LOADOUT_BOX_ORIGIN_X+384), LOADOUT_BOX_ORIGIN_Y , localVarString(loadout_perk_2), localVarString(loadout_perk_2), "", OPEN_PERK_2;, "", "3", "main" ,1,0)
+		MENU_LOADOUT_BOX_PERK(7, (LOADOUT_BOX_ORIGIN_X+384), LOADOUT_BOX_ORIGIN_Y+128 , localVarString(loadout_perk2_2), localVarString(loadout_perk2_2), "", OPEN_PERK2_2;, "", "4", "main" ,1,0)
+		MENU_LOADOUT_BOX_PERK(8, (LOADOUT_BOX_ORIGIN_X+384), LOADOUT_BOX_ORIGIN_Y+256 , localVarString(loadout_perk3_2), localVarString(loadout_perk3_2), "", OPEN_PERK3_2;, "", "5", "main" ,1,0)
+		MENU_LOADOUT_BOX_PERK(9, (LOADOUT_BOX_ORIGIN_X), LOADOUT_BOX_ORIGIN_Y+256 , localVarString(loadout_lethal), localVarString(loadout_lethal), "LETHAL", OPEN_LETHAL;, "", "6", "main" ,1,0)
+		MENU_LOADOUT_BOX_PERK(10, (LOADOUT_BOX_ORIGIN_X+148), LOADOUT_BOX_ORIGIN_Y+256 , localVarString(loadout_tactical), localVarString(loadout_tactical), "TACTICAL", OPEN_TACTICAL;, "", "7", "main" ,1,0)
+		itemDef
+		{
+			style WINDOW_STYLE_FILLED
+			rect FULLSCREEN_WIDE
+			backcolor 0 0 0 0.75
+			visible when(   localVarInt(pick_item) == 1);
+			decoration 
+		}
+		// PRIMARIES
+		MENU_LOADOUT_BUTTON(1,0,0,0,"hud_knife_bo2","None",;,0,(localVarInt(pick_item) == 1 && localVarString(pick_item_type) == "primary"))
+		MENU_LOADOUT_BUTTON(2,0,1,1,"hud_m14","M14",;,0,(localVarInt(pick_item) == 1 && localVarString(pick_item_type) == "primary"))
+		MENU_LOADOUT_BUTTON(3,0,2,2,"hud_olympia","Olympia",;,0,(localVarInt(pick_item) == 1 && localVarString(pick_item_type) == "primary"))
+		MENU_LOADOUT_BUTTON(3,0,2,2,"hud_mp5","MP5",;,0,(localVarInt(pick_item) == 1 && localVarString(pick_item_type) == "primary"))
+		// SECONDARIES
+		MENU_LOADOUT_BUTTON2(1,0,0,0,"hud_knife_bo2","None",;,0,(localVarInt(pick_item) == 1 && localVarString(pick_item_type) == "secondary"))
+		MENU_LOADOUT_BUTTON2(2,0,1,1,"hud_1911_bo2","1911",;,0,(localVarInt(pick_item) == 1 && localVarString(pick_item_type) == "secondary"))
+		MENU_LOADOUT_BUTTON2(3,0,2,2,"hud_fnp45","Tac-45",;,0,(localVarInt(pick_item) == 1 && localVarString(pick_item_type) == "secondary"))
+		// TIER 1 PERKS
+		MENU_LOADOUT_BUTTON_PERK1(1,0,0,0,"specialty_nothing","None",;,0,(localVarInt(pick_item) == 1 && localVarString(pick_item_type) == "perk"))
+		MENU_LOADOUT_BUTTON_PERK1(2,0,1,1,"specialty_revive","Quick Revive",;,0,(localVarInt(pick_item) == 1 && localVarString(pick_item_type) == "perk" && localVarString(loadout_perk_2) != "specialty_revive"))
+		MENU_LOADOUT_BUTTON_PERK1(3,0,2,2,"specialty_flak_jacket","PhD Flopper",;,0,(localVarInt(pick_item) == 1 && localVarString(pick_item_type) == "perk" && localVarString(loadout_perk_2) != "specialty_flak_jacket"))
+		MENU_LOADOUT_BUTTON_PERK1(4,0,3,3,"specialty_extraammo","Ammo-Matic",;,0,(localVarInt(pick_item) == 1 && localVarString(pick_item_type) == "perk" && localVarString(loadout_perk_2) != "specialty_extraammo"))
+		// TIER 1 PERK GREED
+		MENU_LOADOUT_BUTTON_PERK1_GREED(1,0,0,0,"specialty_nothing","None",;,0,(localVarInt(pick_item) == 1 && localVarString(pick_item_type) == "perk_2"))
+		MENU_LOADOUT_BUTTON_PERK1_GREED(2,0,1,1,"specialty_revive","Quick Revive",;,0,(localVarInt(pick_item) == 1 && localVarString(pick_item_type) == "perk_2" && localVarString(loadout_perk) != "specialty_revive"))
+		MENU_LOADOUT_BUTTON_PERK1_GREED(3,0,2,2,"specialty_flak_jacket","PhD Flopper",;,0,(localVarInt(pick_item) == 1 && localVarString(pick_item_type) == "perk_2" && localVarString(loadout_perk) != "specialty_flak_jacket"))
+		MENU_LOADOUT_BUTTON_PERK1_GREED(4,0,3,3,"specialty_extraammo","Ammo-Matic",;,0,(localVarInt(pick_item) == 1 && localVarString(pick_item_type) == "perk_2" && localVarString(loadout_perk) != "specialty_extraammo"))
+		// TIER 2
+		MENU_LOADOUT_BUTTON_PERK2(1,0,0,0,"specialty_nothing","None",;,0,(localVarInt(pick_item) == 1 && localVarString(pick_item_type) == "perk2"))
+		MENU_LOADOUT_BUTTON_PERK2(2,0,1,1,"specialty_fastreload","Sleight of Hand",;,0,(localVarInt(pick_item) == 1 && localVarString(pick_item_type) == "perk2"  && localVarString(loadout_perk2_2) != "specialty_fastreload"))
+		MENU_LOADOUT_BUTTON_PERK2(3,0,2,2,"specialty_extraweapon","Mule Kick",;,0,(localVarInt(pick_item) == 1 && localVarString(pick_item_type) == "perk2"  && localVarString(loadout_perk2_2) != "specialty_extraweapon"))
+		MENU_LOADOUT_BUTTON_PERK2(4,0,3,3,"specialty_bulletaccuracy","Deadshot",;,0,(localVarInt(pick_item) == 1 && localVarString(pick_item_type) == "perk2"  && localVarString(loadout_perk2_2) != "specialty_bulletaccuracy"))
+		// TIER 2 PERK GREED
+		
+		MENU_LOADOUT_BUTTON_PERK2_GREED(1,0,0,0,"specialty_nothing","None",;,0,(localVarInt(pick_item) == 1 && localVarString(pick_item_type) == "perk2_2"))
+		MENU_LOADOUT_BUTTON_PERK2_GREED(2,0,1,1,"specialty_fastreload","Sleight of Hand",;,0,(localVarInt(pick_item) == 1 && localVarString(pick_item_type) == "perk2_2" && localVarString(loadout_perk2) != "specialty_fastreload"))
+		MENU_LOADOUT_BUTTON_PERK2_GREED(3,0,2,2,"specialty_extraweapon","Mule Kick",;,0,(localVarInt(pick_item) == 1 && localVarString(pick_item_type) == "perk2_2"  && localVarString(loadout_perk2) != "specialty_extraweapon"))
+		MENU_LOADOUT_BUTTON_PERK2_GREED(4,0,3,3,"specialty_bulletaccuracy","Deadshot",;,0,(localVarInt(pick_item) == 1 && localVarString(pick_item_type) == "perk2_2"  && localVarString(loadout_perk2) != "specialty_bulletaccuracy"))
+		
+		// TIER 3
+		MENU_LOADOUT_BUTTON_PERK3(1,0,0,0,"specialty_nothing","None",;,0,(localVarInt(pick_item) == 1 && localVarString(pick_item_type) == "perk3"))
+		MENU_LOADOUT_BUTTON_PERK3(2,0,1,1,"specialty_longersprint","Stamin-Up",;,0,(localVarInt(pick_item) == 1 && localVarString(pick_item_type) == "perk3"  && localVarString(loadout_perk3_2) != "specialty_longersprint"))
+		MENU_LOADOUT_BUTTON_PERK3(3,0,2,2,"specialty_rof","Double Tap",;,0,(localVarInt(pick_item) == 1 && localVarString(pick_item_type) == "perk3"  && localVarString(loadout_perk3_2) != "specialty_rof"))
+		MENU_LOADOUT_BUTTON_PERK3(4,0,3,3,"specialty_juggernaut","Juggernog",;,0,(localVarInt(pick_item) == 1 && localVarString(pick_item_type) == "perk3"  && localVarString(loadout_perk3_2) != "specialty_bulletaccuracy"))
+		// TIER 3 PERK GREED
+		
+		MENU_LOADOUT_BUTTON_PERK3_GREED(1,0,0,0,"specialty_nothing","None",;,0,(localVarInt(pick_item) == 1 && localVarString(pick_item_type) == "perk3_2"))
+		MENU_LOADOUT_BUTTON_PERK3_GREED(2,0,1,1,"specialty_longersprint","Stamin-Up",;,0,(localVarInt(pick_item) == 1 && localVarString(pick_item_type) == "perk3_2"  && localVarString(loadout_perk3) != "specialty_longersprint"))
+		MENU_LOADOUT_BUTTON_PERK3_GREED(3,0,2,2,"specialty_rof","Double Tap",;,0,(localVarInt(pick_item) == 1 && localVarString(pick_item_type) == "perk3_2"  && localVarString(loadout_perk3) != "specialty_rof"))
+		MENU_LOADOUT_BUTTON_PERK3_GREED(4,0,3,3,"specialty_juggernaut","Juggernog",;,0,(localVarInt(pick_item) == 1 && localVarString(pick_item_type) == "perk3_2"  && localVarString(loadout_perk3) != "specialty_bulletaccuracy"))
+		
+		itemDef
+		{
+			name		quit_pick_item
+			type		ITEM_TYPE_BUTTON
+			style		WINDOW_STYLE_FILLED
+			textstyle	ITEM_TEXTSTYLE_SHADOWED
+			rect		64 420 128 24 1 1
+			text		"@MENU_BACK"
+			forecolor	1 1 1 1
+			textfont	9
+			textalign	ITEM_ALIGN_CENTER
+			textalignY	18
+			textscale	0.375
+			visible		when(localVarInt(pick_item) == 1)
+			mouseEnter   
+			{  
+				play "mouse_over";  
+			}
+			action  
+			{
+				play "mouse_click";
+				setlocalVarInt pick_item 0;
+				setLocalVarString pick_item_type ""; 
+			} 
+		}
+		//MENU_LOADOUT_BUTTON( COLUMN, ROW, ID TO SET IN STAT, MATERIAL FOR HUD ICON, NAME, ADDITIONAL ACTIONS, XP NEEDED )
+		// Primaries
+		//MENU_LOADOUT_BUTTON(1,0,0,1,"hud_ksg","KSG",;,0)
+		//MENU_LOADOUT_BUTTON(2,0,1,2,"hud_sa85","FAL OSW",;,7680)
+		//MENU_LOADOUT_BUTTON(3,0,2,3,"hud_scar_h","Scar-H",;,17480)
+		// Secondaries
+		//MENU_LOADOUT_BUTTON2(1,1,0,1,"hud_1911_bo2","1911",;,0)
+		//MENU_LOADOUT_BUTTON2(2,1,1,2,"hud_fn57","FiveSeven",;,7680)
+		//MENU_LOADOUT_BUTTON2(3,1,2,3,"hud_fnp45","Tac-45",;,12000)
+		// Perks
+		//MENU_LOADOUT_BUTTON3(1,2,0,1,"specialty_bulletaccuracy","Deadshot",;,0)
+		//MENU_LOADOUT_BUTTON3(2,2,1,2,"specialty_bulletaccuracy","Quick Revive",;,10830)
+		//MENU_LOADOUT_BUTTON3(3,2,2,3,"specialty_bulletaccuracy","Sleight of Hand",;,22430 )
+		//MENU_LOADOUT_BUTTON3(4,2,3,4,"specialty_bulletaccuracy","Double Tap",;,39150)
+		//MENU_LOADOUT_BUTTON3(5,2,4,5,"specialty_bulletaccuracy","Scavenger",;,61110)
+		//MENU_LOADOUT_BUTTON3(6,2,5,6,"specialty_bulletaccuracy","Juggernaut",;,148680)
+		//MENU_LOADOUT_BOX(3, 95, LOADOUT_BOX_ORIGIN_Y , "menu_button_options", "menu_button_options_blur", "OPTIONS", ;, "", "3", "main",1,0)
+		/*
+		itemDef
+		{
+			rect 0 346 640 24 4 1
+			style 3
+			border 0
+			ownerdraw 0
+			ownerdrawFlag 0
+			borderSize 0
+			foreColor 0 0 0 1
+			backColor 0 0 0 0
+			borderColor 0 0 0 0
+			outlineColor 0 0 0 0
+			background line_horizontal
+			decoration 
+			type 0
+			align 0
+			textAlign 0
+			textAlignX 0
+			textAlignY 0
+			textScale 0.55
+			textStyle 0
+			textFont 0
+			feeder 0
+			visible 1
+			visible when ( 1  )
+		}
+		*/
+/*
+ 		itemDef
+ 		{
+ 			rect			-130 -180 256 128 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+ 			forecolor		1 1 1 1
+ 			style			WINDOW_STYLE_SHADER
+ 			background		"aftermath_logo"
+ 			visible			when( !localVarBool( ui_hideBack ) );
+ 			decoration
+ 		}
+*/
+ 		#undef TEXT_SCROLL_TIME
+		#define TEXT_SCROLL_TIME 15000
+		/*
+		itemDef
+		{
+			name			"newsfeed"
+			style			ITEM_TYPE_TEXT
+			rect			900 0 900 16 1 3
+			exp				rect X((1200) - ((float(milliseconds() % TEXT_SCROLL_TIME) / TEXT_SCROLL_TIME) * (3000)))
+			exp				text("^1BREAKING NEWS^7: It is being suggested that the latest politics assassinations were pulled out by Cordis Die. Could it be the beggining of something worse?")
+			forecolor		1 1 1 1
+			textfont		1
+			textscale		0.3
+			visible			1
+			decoration
+		}*/
+
+
+
+		#include "ui/safearea.menu"
+	}
+
+	
+	
+}
+

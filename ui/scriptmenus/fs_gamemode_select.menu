@@ -1,0 +1,238 @@
+#include "ui/menudef.h"
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+#include "ui/choices_setup_popmenu.menu"
+
+{
+
+	
+	menuDef
+	{
+		name				"fs_gamemode_select"		
+		rect				FULLSCREEN_WIDE
+		focuscolor		1 1 1 1
+		disablecolor		0 0 0 0
+ 		style				WINDOW_STYLE_SHADER
+		background 			"loadscreen_pel1"
+
+		onOpen
+		{
+			setLocalVarInt fs_gamemode 0;
+			setLocalVarInt fs_timed 0;
+			setLocalVarInt fs_round 1;
+			exec "set fs_start_round 1";
+		}
+		onClose
+		{
+		}
+		onEsc
+		{
+			setLocalVarInt fs_gamemode 0;
+			setLocalVarInt fs_timed 0;
+			setLocalVarInt fs_round 1;
+			exec "set fs_start_round 1";
+		}
+		
+		/*
+		#undef CHOICE_SIZE_X
+		#undef CHOICE_SIZE_Y
+		#define CHOICE_SIZE_X								240
+		#define CHOICE_SIZE_Y								20
+		#undef CHOICE_Y_SPACING
+		#define CHOICE_Y_SPACING		30
+		#undef CHOICE_TEXTCOLOR
+		#define CHOICE_TEXTCOLOR 					1 0.5 0 1//0.8 0.8 0.8 1
+		#undef HIGHLIGHT_BORDER_COLOR
+		#define HIGHLIGHT_BORDER_COLOR	0 0 0 0
+		#undef HIGHLIGHT_COLOR
+		#define HIGHLIGHT_COLOR			1 0.5 0 0
+		#undef BUTTON_BG_COLOR
+		#define BUTTON_BG_COLOR			1 0.5 0 0
+
+		
+		#define TEXT_X_START 114//114
+		#define TEXT_Y_START 10
+
+		#undef	CHOICE_Y_START
+		#define CHOICE_Y_START 270//450
+		#undef	CHOICE_X_START
+		#define CHOICE_X_START 100
+		
+		#undef CHOICE_HORIZONTAL_ALIGN
+		#define CHOICE_HORIZONTAL_ALIGN HORIZONTAL_ALIGN_CENTER
+		
+		#undef	CHOICE_Y_START
+		#define CHOICE_Y_START							170
+		#undef	CHOICE_X_START
+		#define CHOICE_X_START							-114//-114 //-117 //closer to 0 is farther to right
+		#undef	CHOICE_Y_START*/
+			//#define CHOICE_Y_START							211
+			#define GAMEMODE (localvarInt(fs_gamemode))
+			#define CHOICE_Y_START							240
+			#undef	CHOICE_X_START
+			#define CHOICE_X_START							-164 //-114  //-117 //closer to 0 is farther to right
+			#undef CHOICE_SIZE_X
+			#undef CHOICE_SIZE_Y
+			#define CHOICE_SIZE_X								200
+			//#define CHOICE_SIZE_Y								20
+			#define CHOICE_SIZE_Y								16
+			#undef CHOICE_Y_SPACING
+			//#define CHOICE_Y_SPACING		25
+			#define CHOICE_Y_SPACING		16
+			#undef CHOICE_TEXTCOLOR
+			#define CHOICE_TEXTCOLOR 					0.9 0.9 0.9 1
+			#undef HIGHLIGHT_BORDER_COLOR
+			#define HIGHLIGHT_BORDER_COLOR	0 0 0 0
+			#undef HIGHLIGHT_COLOR
+			//#define HIGHLIGHT_COLOR			1 1 1 0.05
+			#define HIGHLIGHT_COLOR			1 1 1 0
+			#undef BUTTON_BG_COLOR
+			#define BUTTON_BG_COLOR			0 0 0 0
+			#undef CHOICE_HORIZONTAL_ALIGN
+			#define CHOICE_HORIZONTAL_ALIGN HORIZONTAL_ALIGN_CENTER
+		
+		CHOICE_BUTTON_VIS( 1, "Gamemode: Classic", 						play "mouse_click"; scriptMenuResponse "gungame"; setLocalVarInt fs_gamemode 1;, 	when(GAMEMODE == 0); )
+		CHOICE_BUTTON_VIS( 1, "Gamemode: Gungame", 						play "mouse_click"; scriptMenuResponse "turned"; setLocalVarInt fs_gamemode 2;, 	when(GAMEMODE == 1); )
+		CHOICE_BUTTON_VIS( 1, "Gamemode: Turned", 						play "mouse_click"; scriptMenuResponse "scavenger"; setLocalVarInt fs_gamemode 3;, 	when(GAMEMODE == 2); )
+		CHOICE_BUTTON_VIS( 1, "Gamemode: Scavenger", 						play "mouse_click"; scriptMenuResponse "classic"; setLocalVarInt fs_gamemode 0;, 	when(GAMEMODE == 3); )
+		CHOICE_CAPTION_VIS( 2, "The classic zombie slaying!",when(GAMEMODE == 0); )
+		CHOICE_CAPTION_VIS( 2, "Who is the gun master? Collect points to win!",when(GAMEMODE == 1); )
+		CHOICE_CAPTION_VIS( 2, "Scavenge and survive!",when(GAMEMODE == 4); )
+		CHOICE_DVARSLIDER_VIS( 3, "Start from round "+dvarInt(fs_start_round), fs_start_round, 1, 1, 20, ;, 1 )
+		CHOICE_BUTTON_VIS_NOHI( 6, "Start the carnage",				play "mouse_click"; scriptMenuResponse "start"; close fs_gamemode_select;,			when(1);)
+	}
+}
+
+//CHOICE_BUTTON( 2, "@MENU_YES", uiScript startMultiplayer; close self;)
+
+/*
+		
+		
+		
+		#define CLASSIC (dvarBool(ugxm_allow_classic) == 1)
+		#define NCLASSIC (dvarBool(ugxm_allow_classic) == 0)
+		#define GUNGAME (dvarBool(ugxm_allow_gungame) == 1)
+		#define NGUNGAME (dvarBool(ugxm_allow_gungame) == 0)
+		#define ARCADE (dvarBool(ugxm_allow_arcademode) == 1)
+		#define NARCADE (dvarBool(ugxm_allow_arcademode) == 0)
+		#define SHARPS (dvarBool(ugxm_allow_sharpshooter) == 1)
+		#define NSHARPS (dvarBool(ugxm_allow_sharpshooter) == 0)
+		
+		#define CL_IS_LAST (CLASSIC && NGUNGAME && NARCADE && NSHARPS)
+		#define GG_IS_LAST (GUNGAME && NARCADE && NSHARPS)
+		#define AR_IS_LAST (ARCADE && NSHARPS)
+		#define SS_IS_LAST (SHARPS)
+		
+		#define NONE_BUT_CLASSIC (NGUNGAME && NARCADE && NSHARPS)
+		#define NONE_BUT_GUNGAME (NCLASSIC && NARCADE && NSHARPS)
+		#define NONE_BUT_ARCADE (NCLASSIC && NGUNGAME && NSHARPS)
+		#define NONE_BUT_SHARPS (NCLASSIC && NARCADE && NGUNGAME)*/
+
+/*CHOICE_BUTTON_VIS( 4, "Gamemode is Classic", play "mouse_click";, when(GAMEMODE == 0); )
+		CHOICE_BUTTON_VIS( 4, "Gamemode is Gungame", play "mouse_click";, when(GAMEMODE == 1); )
+		CHOICE_BUTTON_VIS( 4, "Gamemode is Arcade", play "mouse_click";, when(GAMEMODE == 2); )
+		CHOICE_BUTTON_VIS( 4, "Gamemode is Sharpshooter", play "mouse_click";, when(GAMEMODE == 3); )
+		
+		CHOICE_BUTTON_VIS( 6, "Classic Allowed", play "mouse_click";, when(CLASSIC); )
+		CHOICE_BUTTON_VIS( 7, "Gungame Allowed", play "mouse_click";, when(GUNGAME); )
+		CHOICE_BUTTON_VIS( 8, "Arcade Allowed", play "mouse_click";, when(ARCADE); )
+		CHOICE_BUTTON_VIS( 9, "Sharpshooter Allowed", play "mouse_click";, when(SHARPS); )*/
+
+//#define SHOW_CLASSIC 	(GAMEMODES_ALLOWED && CLASSIC 		&& 	(NONE_BUT_CLASSIC 		|| 	(GAMEMODE == 0 && CLASSIC)																																																								|| (GAMEMODE == 3 && CLASSIC && NSHARPS) || (GAMEMODE == 2 && CLASSIC && NSHARPS && NARCADE)))
+		//#define SHOW_GUNGAME 	(GAMEMODES_ALLOWED && GUNGAME 	&& 	(NONE_BUT_GUNGAME 		|| 	(GAMEMODE == 1 && GUNGAME)		|| (GAMEMODE == 0 && NCLASSIC)																																											|| (GAMEMODE == 3 && NCLASSIC && NSHARPS && GUNGAME) || (GAMEMODE == 2 && NCLASSIC && NSHARPS && GUNGAME && NARCADE)))
+		//#define SHOW_ARCADE		(GAMEMODES_ALLOWED && ARCADE 		&& 	(NONE_BUT_ARCADE 		|| 	(GAMEMODE == 2 && ARCADE)		|| (GAMEMODE == 0 && NCLASSIC && NGUNGAME) || (GAMEMODE == 1 && NGUNGAME)																									|| (GAMEMODE == 3 && NCLASSIC && NSHARPS && NGUNGAME) || (GAMEMODE == 2 && NCLASSIC && NSHARPS && NGUNGAME && NARCADE)))
+		//#define SHOW_SHARP		(GAMEMODES_ALLOWED && SHARPS 		&&	(NONE_BUT_SHARPS 		|| 	(GAMEMODE == 3 && SHARPS)		||	(GAMEMODE == 0 && NCLASSIC && NGUNGAME && NARCADE) || (GAMEMODE == 1 && NGUNGAME && NARCADE) ||	(GAMEMODE == 2 && NARCADE)))
+		
+		// order:
+		// classic, gungame, arcade, sharpshooter
+		
+		//CHOICE_BUTTON_VIS( 1, "Gamemode: Classic", 			scriptMenuResponse "gg";	setLocalVarInt ugx_gamemode 1;,	when(SHOW_CLASSIC);)
+		//CHOICE_BUTTON_VIS( 1, "Gamemode: Gungame",			scriptMenuResponse "ar";	setLocalVarInt ugx_gamemode 2;,	when(SHOW_GUNGAME);)
+		//CHOICE_BUTTON_VIS( 1, "Gamemode: Arcademode",		scriptMenuResponse "ss";	setLocalVarInt ugx_gamemode 3;,	when(SHOW_ARCADE);)
+		//CHOICE_BUTTON_VIS( 1, "Gamemode: Sharpshooter",		scriptMenuResponse "cl";	setLocalVarInt ugx_gamemode 0;,	when(SHOW_SHARP);)
+		
+		//CHOICE_BUTTON_VIS( 1, "Gamemode: Classic", 					scriptMenuResponse "gg";	setLocalVarInt ugx_gamemode 1;,	when( (GAMEMODE == 0 && CLASSIC ) || (GAMEMODE == 1 && dvarBool(ugxm_allow_gungame) == 0) || (GAMEMODE == 2 && dvarBool(ugxm_allow_arcademode) == 0) || (GAMEMODE == 3 && dvarBool(ugxm_allow_sharpshooter) == 0));)
+		//CHOICE_BUTTON_VIS( 1, "Gamemode: Gungame",				scriptMenuResponse "ar";	setLocalVarInt ugx_gamemode 2;,	when( (GAMEMODE == 0 && NCLASSIC && dvarBool(ugxm_allow_gungame) == 1) || (GAMEMODE == 1 &&  dvarBool(ugxm_allow_gungame) == 1) ); )
+		//CHOICE_BUTTON_VIS( 1, "Gamemode: Arcademode",			scriptMenuResponse "ss";	setLocalVarInt ugx_gamemode 3;,	when( (GAMEMODE == 0 && NCLASSIC && dvarBool(ugxm_allow_gungame) == 0 && dvarBool(ugxm_allow_arcademode) == 1) || (GAMEMODE == 1 && dvarBool(ugxm_allow_gungame) == 0 && dvarBool(ugxm_allow_arcademode) == 1) || (GAMEMODE == 2 && dvarBool(ugxm_allow_arcademode) == 1) ); )
+		//CHOICE_BUTTON_VIS( 1, "Gamemode: Sharpshooter",		scriptMenuResponse "cl";	setLocalVarInt ugx_gamemode 0;,	when( (GAMEMODE == 0 && NCLASSIC && dvarBool(ugxm_allow_gungame) == 0 && dvarBool(ugxm_allow_arcademode) == 0 && dvarBool(ugxm_allow_sharpshooter) == 1) || (GAMEMODE == 1 && dvarBool(ugxm_allow_gungame) == 0 &&  dvarBool(ugxm_allow_arcademode) == 0 && dvarBool(ugxm_allow_sharpshooter) == 1) || (GAMEMODE == 2 && dvarBool(ugxm_allow_arcademode) == 0 && dvarBool(ugxm_allow_sharpshooter) == 1) || (GAMEMODE == 3 &&  dvarBool(ugxm_allow_sharpshooter) == 1) ); )
+		
+		
+		//CHOICE_BUTTON_VIS( 1, "Gamemode: Classic", 				scriptMenuResponse "gg";	setLocalVarInt ugx_gamemode 1;,	when((GAMEMODE == 0 && CLASSIC) || CL_IS_LAST);)
+		//CHOICE_BUTTON_VIS( 1, "Gamemode: Gungame", 			scriptMenuResponse "ar";	setLocalVarInt ugx_gamemode 2;,	when((GAMEMODE == 0 && NCLASSIC) || (GAMEMODE == 1 && GUNGAME) || (GAMEMODE > 1 && GG_IS_LAST));)
+		//CHOICE_BUTTON_VIS( 1, "Gamemode: Arcademode", 		scriptMenuResponse "ss";	setLocalVarInt ugx_gamemode 3;,	when((GAMEMODE == 0 && NCLASSIC) || (GAMEMODE == 1 && NGUNGAME) || (GAMEMODE == 2 && ARCADE) || (GAMEMODE > 2 && AR_IS_LAST));)
+		//CHOICE_BUTTON_VIS( 1, "Gamemode: Sharpshooter", 	scriptMenuResponse "cl";	setLocalVarInt ugx_gamemode 0;,	when((GAMEMODE == 0 && NCLASSIC) || (GAMEMODE == 1 && NGUNGAME) || (GAMEMODE == 2 && NARCADE) || (GAMEMODE == 3 && SHARPS));)
+		
+		//CHOICE_BUTTON_VIS( 1, "Gamemode: Gungame",				scriptMenuResponse "ar";	setLocalVarInt ugx_gamemode 2;,	when( (GAMEMODE == 0 && NCLASSIC && GUNGAME) || (localvarInt(ugx_gamemode) == 1 &&  dvarBool(ugxm_allow_gungame) == 1) ); )
+		//CHOICE_BUTTON_VIS( 1, "Gamemode: Arcademode",			scriptMenuResponse "ss";	setLocalVarInt ugx_gamemode 3;,	when( (GAMEMODE == 0 && NCLASSIC && NGUNGAME && dvarBool(ugxm_allow_arcademode) == 1) || (localvarInt(ugx_gamemode) == 1 && dvarBool(ugxm_allow_gungame) == 0 && dvarBool(ugxm_allow_arcademode) == 1) || (localvarInt(ugx_gamemode) == 2 && dvarBool(ugxm_allow_arcademode) == 1) ); )
+		//CHOICE_BUTTON_VIS( 1, "Gamemode: Sharpshooter",		scriptMenuResponse "cl";	setLocalVarInt ugx_gamemode 0;,	when( (GAMEMODE == 0 && NCLASSIC && NGUNGAME && dvarBool(ugxm_allow_arcademode) == 0 && dvarBool(ugxm_allow_sharpshooter) == 1) || (localvarInt(ugx_gamemode) == 1 && dvarBool(ugxm_allow_gungame) == 0 &&  dvarBool(ugxm_allow_arcademode) == 0 && dvarBool(ugxm_allow_sharpshooter) == 1) || (localvarInt(ugx_gamemode) == 2 && dvarBool(ugxm_allow_arcademode) == 0 && dvarBool(ugxm_allow_sharpshooter) == 1) || (localvarInt(ugx_gamemode) == 3 &&  dvarBool(ugxm_allow_sharpshooter) == 1) ); )
+		
+		//CHOICE_BUTTON_VIS( 1, "Gamemode: Classic", 					scriptMenuResponse "gg";	setLocalVarInt ugx_gamemode 1;,	when( (localvarInt(ugx_gamemode) == 0 && dvarBool(ugxm_allow_classic) == 1 ) || ((localvarInt(ugx_gamemode) == 1 && dvarBool(ugxm_allow_gungame) == 0) || (localvarInt(ugx_gamemode) == 2 && dvarBool(ugxm_allow_arcademode) == 0) || (localvarInt(ugx_gamemode) == 3 && dvarBool(ugxm_allow_sharpshooter) == 0)));)
+		//CHOICE_BUTTON_VIS( 1, "Gamemode: Gungame",				scriptMenuResponse "ar";	setLocalVarInt ugx_gamemode 2;,	when( (localvarInt(ugx_gamemode) == 0 && dvarBool(ugxm_allow_classic) == 0 && dvarBool(ugxm_allow_gungame) == 1) || (localvarInt(ugx_gamemode) == 1 &&  dvarBool(ugxm_allow_gungame) == 1) ); )
+		//CHOICE_BUTTON_VIS( 1, "Gamemode: Arcademode",			scriptMenuResponse "ss";	setLocalVarInt ugx_gamemode 3;,	when( (localvarInt(ugx_gamemode) == 0 && dvarBool(ugxm_allow_classic) == 0 && dvarBool(ugxm_allow_gungame) == 0 && dvarBool(ugxm_allow_arcademode) == 1) || (localvarInt(ugx_gamemode) == 1 && dvarBool(ugxm_allow_gungame) == 0 && dvarBool(ugxm_allow_arcademode) == 1) || (localvarInt(ugx_gamemode) == 2 && dvarBool(ugxm_allow_arcademode) == 1) ); )
+		//CHOICE_BUTTON_VIS( 1, "Gamemode: Sharpshooter",		scriptMenuResponse "cl";	setLocalVarInt ugx_gamemode 0;,	when( (localvarInt(ugx_gamemode) == 0 && dvarBool(ugxm_allow_classic) == 0 && dvarBool(ugxm_allow_gungame) == 0 && dvarBool(ugxm_allow_arcademode) == 0 && dvarBool(ugxm_allow_sharpshooter) == 1) || (localvarInt(ugx_gamemode) == 1 && dvarBool(ugxm_allow_gungame) == 0 &&  dvarBool(ugxm_allow_arcademode) == 0 && dvarBool(ugxm_allow_sharpshooter) == 1) || (localvarInt(ugx_gamemode) == 2 && dvarBool(ugxm_allow_arcademode) == 0 && dvarBool(ugxm_allow_sharpshooter) == 1) || (localvarInt(ugx_gamemode) == 3 &&  dvarBool(ugxm_allow_sharpshooter) == 1) ); )
+		//CHOICE_BUTTON_VIS( 1, "Gamemode: None Allowed", play "mouse_click";, when(NO_GAMEMODES_ALLOWED); )
+
+//CHOICE_BUTTON_VIS( 2, "Timed Gameplay: Yes", 	scriptMenuResponse "timed"; , when(localvarInt(ugx_gamemode) == 3); )
+
+//CHOICE_BUTTON_VIS( 5, "Exit to Main Menu", 							play "mouse_click";, when(dvarBool(ugxm_allow_gungame) == 0 && dvarBool(ugxm_allow_classic) == 0 && dvarBool(ugxm_allow_sharpshooter) == 0 && dvarBool(ugxm_allow_arcademode) == 0);)
+		//CHOICE_BUTTON_P( 5, "Exit to Main Menu", 							play "mouse_click";, when(dvarBool(ugxm_allow_gungame) == 0 && dvarBool(ugxm_allow_classic) == 0 && dvarBool(ugxm_allow_sharpshooter) == 0 && dvarBool(ugxm_allow_arcademode) == 0);)
+		//CHOICE_BUTTON_P( 4, "Exit to Main Menu", "zombie_quit", open "popup_nosave_quit";, dvarstring( "credits_active" ) != "1" && dvarBool( zombiemode ) && dvarbool( sv_running ) && SOLO )
+		//CHOICE_BUTTON_FOCUS( 5, "Exit to Main Menu", ACTION_NOSAVE_QUIT, play "mouse_over";, ; )
+		
+	/*
+	CHOICE_BUTTON_VIS( 9, "Gamemode is 0", play "mouse_click";, when(localvarInt(ugx_gamemode) == 0);)
+		CHOICE_BUTTON_VIS( 9, "Gamemode is 1", play "mouse_click";, when(localvarInt(ugx_gamemode) == 1);)
+		CHOICE_BUTTON_VIS( 9, "Gamemode is 2", play "mouse_click";, when(localvarInt(ugx_gamemode) == 2);)
+		CHOICE_BUTTON_VIS( 9, "Gamemode is 3", play "mouse_click";, when(localvarInt(ugx_gamemode) == 3);)
+		
+		CHOICE_BUTTON_VIS( 6, "Classic is allowed", play "mouse_click";, when(dvarBool(ugxm_allow_classic) == 1);)
+		CHOICE_BUTTON_VIS( 6, "Classic is not allowed", play "mouse_click";, when(dvarBool(ugxm_allow_classic) == 0);)
+		
+		CHOICE_BUTTON_VIS( 4, "Gungame is allowed", play "mouse_click";, when(dvarBool(ugxm_allow_gungame) == 1);)
+		CHOICE_BUTTON_VIS( 4, "Gungame is not allowed", play "mouse_click";, when(dvarBool(ugxm_allow_gungame) == 0);)
+		
+		CHOICE_BUTTON_VIS( 7, "Arcademode is allowed", play "mouse_click";, when(dvarBool(ugxm_allow_arcademode) == 1);)
+		CHOICE_BUTTON_VIS( 7, "Arcademode is not allowed", play "mouse_click";, when(dvarBool(ugxm_allow_arcademode) == 0);)
+		
+		CHOICE_BUTTON_VIS( 8, "Sharpshooter is allowed", play "mouse_click";, when(dvarBool(ugxm_allow_sharpshooter) == 1);)
+		CHOICE_BUTTON_VIS( 8, "Sharpshooter is not allowed", play "mouse_click";, when(dvarBool(ugxm_allow_sharpshooter) == 0);)
+		*/
+
+// show classic if....
+		// local gamemode is 0 and classic is allowed
+		// localvarInt(ugx_gamemode) == 0 && dvarBool(ugxm_allow_classic) == 1
+		
+		// show gungame if...
+		// ( local gamemode is 0 and classic isnt allowed) or local gamemode is 1
+		// (localvarInt(ugx_gamemode) == 0 && dvarBool(ugxm_allow_classic) == 0) || localvarInt(ugx_gamemode) == 1
+		
+		// show arcade if...
+		// (local gamemode is 0 and classic and gungame arnt allowed) or (local gamemode is 1 and gungame isnt allowed) or local gamemode is 2
+		// (localvarInt(ugx_gamemode) == 0 && dvarBool(ugxm_allow_classic) == 0 && dvarBool(ugxm_allow_gungame) == 0) || (localvarInt(ugx_gamemode) == 1 && dvarBool(ugxm_allow_gungame) == 0) || localvarInt(ugx_gamemode) == 2
+		
+		// show sharpshooter if...
+		// (local gamemode is 0 and classic and gungame and arcade arnt allowed) or (local gamemode is 1 and gungame and arcade arnt allowed) or ( local gamemode is 2 and arcade isnt allowed) or local gamemode is 3
+		// (localvarInt(ugx_gamemode) == 0 && dvarBool(ugxm_allow_classic) == 0 && dvarBool(ugxm_allow_gungame) == 0 && dvarBool(ugxm_allow_arcademode) == 0) || (localvarInt(ugx_gamemode) == 1 && dvarBool(ugxm_allow_gungame) == 0 &&  dvarBool(ugxm_allow_arcademode) == 0) || (localvarInt(ugx_gamemode) == 2 && dvarBool(ugxm_allow_arcademode) == 0) || localvarInt(ugx_gamemode) == 3
+		
+		// show disabled if...
+		// classc, gungame, arcade, and sharpshooter all arnt allowed
+		
+		
+		
+		
+		
+		
+		
+		//CHOICE_BUTTON_VIS( 1, "Gamemode: Gungame",		scriptMenuResponse "ar";		setLocalVarInt ugx_gamemode 2;,		when(localvarInt(ugx_gamemode) == 0 && dvarBool(ugxm_allow_classic) == 0); )
+		
+		//CHOICE_BUTTON_VIS( 1, "Gamemode: Gungame",			scriptMenuResponse "ar";		setLocalVarInt ugx_gamemode 2;,		when(localvarInt(ugx_gamemode) == 1 && dvarBool(ugxm_allow_gungame) == 1); )
+		//CHOICE_BUTTON_VIS( 1, "Gamemode: Arcademode",		scriptMenuResponse "ss";		setLocalVarInt ugx_gamemode 3;,		when(localvarInt(ugx_gamemode) == 1 && dvarBool(ugxm_allow_gungame) == 0); )
+		
+		//CHOICE_BUTTON_VIS( 1, "Gamemode: Arcademode",			scriptMenuResponse "ss";		setLocalVarInt ugx_gamemode 3;,		when(localvarInt(ugx_gamemode) == 1 && dvarBool(ugxm_allow_gungame) == 1); )
+		//CHOICE_BUTTON_VIS( 1, "Gamemode: Sharpshooter",		scriptMenuResponse "gg";		setLocalVarInt ugx_gamemode 3;,		when(localvarInt(ugx_gamemode) == 1 && dvarBool(ugxm_allow_gungame) == 0); )
+		
+		
+		
+		//CHOICE_BUTTON_VIS( 1, "Gamemode: Gungame", 		scriptMenuResponse "ar";	setLocalVarInt ugx_gamemode 2;, when(localvarInt(ugx_gamemode) == 1 ); )
+		//CHOICE_BUTTON_VIS( 1, "Gamemode: Arcademode", 	scriptMenuResponse "ss";	setLocalVarInt ugx_gamemode 3;, when(localvarInt(ugx_gamemode) == 2 ); )
+		//CHOICE_BUTTON_VIS( 1, "Gamemode: Sharpshooter", scriptMenuResponse "cl";	setLocalVarInt ugx_gamemode 0;, when(localvarInt(ugx_gamemode) == 3 ); )

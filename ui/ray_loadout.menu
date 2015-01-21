@@ -1,0 +1,765 @@
+// CONSOLE SP - Main
+
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+#include "ui/mission_select/missiondefs.menu"
+
+#undef	SIGNED_IN_RECT
+#define SIGNED_IN_RECT			-350 60 250 15
+
+#define CHOICE_SIZE_X			150
+#define CHOICE_SIZE_Y			22
+
+#define CHOICE_X_START			0
+#define CHOICE_Y_START			120
+
+#undef	CHOICE_Y_START
+#define CHOICE_Y_START		50//106//120
+#undef	CHOICE_X_START
+#define CHOICE_X_START			30
+
+#define CHOICE_SEP_OFFSET_Y		-2
+
+#define CHOICE_GROUP			"main"
+#undef CHOICE_SEP_1
+#define CHOICE_SEP_1			3
+#define CHOICE_SEP_2			6
+
+#define CLEARUIHINT	exec "set ui_hint_text @NULL_EMPTY"; hide "desc_arrow"
+
+
+
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+#include "ui/online_status.inc"
+{
+	assetGlobalDef
+	{
+		fadeClamp		1.0						// sets the fadeup alpha
+		fadeCycle		1						// how often fade happens in milliseconds
+		fadeAmount		0.1						// amount to adjust alpha per cycle
+	}
+	
+
+
+	menuDef
+	{
+		name			victoryscreen
+		fullScreen		1
+		rect			0 0 640 480
+		focusColor		COLOR_FOCUSED
+		soundloop 		"music_mainmenu"
+		style			WINDOW_STYLE_EMPTY
+		onOpen
+		{
+			CLEARUIHINT
+			setLocalVarString aftermath_weapon1 "hud_ksg"
+			setLocalVarString aftermath_weapon2 "hud_fnp45"
+			setLocalVarString loadout_perk "specialty_nothing"
+			setLocalVarInt ui_loadout_index_highlight 1;
+			setLocalVarInt ui_loadout_index_highlight2 1;
+			setLocalVarInt ui_loadout_index_highlight3 0;
+			exec "set loadout_primary 1";
+			exec "set loadout_secondary 1";
+			exec "set loadout_perk 0";
+		}
+		onFocus
+		{
+
+		}
+		onEsc
+		{
+			close victoryscreen;
+		}
+
+		#undef LOADOUT_BOX_ORIGIN_X
+		#undef LOADOUT_BOX_ORIGIN_Y
+		#define LOADOUT_BOX_ORIGIN_X 0
+		#define LOADOUT_BOX_ORIGIN_Y 0
+	#define MENU_LOADOUT_BOX( indexArg, rectXArg, rectYArg, imgArg, blurArg, textArg, actionArg, descArg, backArg, groupArg, visArg, newVisArg ) \
+		itemDef \
+		{ \
+			style WINDOW_STYLE_FILLED \
+			rect (rectXArg) (rectYArg - 128) 180 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+			backcolor 0.2 0.2 0.22 1 \
+			visible when ( !localVarBool( ui_hideBack ) && visArg ); \
+			decoration \
+		} \
+		itemDef \
+		{ \
+			style WINDOW_STYLE_FILLED \
+			rect (rectXArg) (rectYArg) 180 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+			backcolor 0.2 0.2 0.22 1 \
+			visible when( localVarInt( ui_highlight ) == indexArg && localVarString( ui_choicegroup ) == groupArg && !localVarBool( ui_hideBack ) && visArg ); \
+			decoration \
+		} \
+		itemDef \
+		{ \
+			style WINDOW_STYLE_FILLED \
+			rect (rectXArg) (rectYArg) 180 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+			backcolor 0.2 0.2 0.22 1 \
+			visible when( localVarInt( ui_highlight ) != indexArg && !localVarBool( ui_hideBack ) && visArg ); \
+			decoration \
+		} \
+		itemDef \
+		{ \
+			style ITEM_TYPE_TEXT \
+			rect (rectXArg) (rectYArg - 128) 180 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+			forecolor 0.504 0.504 0.504 1 \
+			exp text( textArg ) \
+			textfont 9 \
+			textscale 0.4 \
+			textstyle 0 \
+			textalign ITEM_ALIGN_MIDDLE_CENTER \
+			visible when( localVarInt( ui_highlight ) != indexArg && !localVarBool( ui_hideBack ) && visArg ); \
+			decoration \
+		} \
+		itemDef \
+		{ \
+			style ITEM_TYPE_TEXT \
+			rect (rectXArg) (rectYArg - 128) 180 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+			forecolor 1 1 1 1 \
+			exp text( textArg ) \
+			textfont 9 \
+			textscale 0.4 \
+			textstyle 0 \
+			textalign ITEM_ALIGN_MIDDLE_CENTER \
+			visible when( localVarInt( ui_highlight ) == indexArg && localVarString( ui_choicegroup ) == groupArg && !localVarBool( ui_hideBack ) && visArg ); \
+			decoration \
+		} \
+		itemDef \
+		{ \
+			style WINDOW_STYLE_FILLED \
+			rect (rectXArg) (rectYArg-110) 180 110 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+			backcolor 0.1 0.1 0.1 1 \
+			visible when(  !localVarBool( ui_hideBack ) && visArg ); \
+			decoration \
+		} \
+		itemDef \
+		{ \
+			style WINDOW_STYLE_SHADER \
+			rect (rectXArg) (rectYArg - 100) 180 90 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+			forecolor 1 1 1 1 \
+			exp material(blurArg) \
+			visible when( localVarInt( ui_highlight ) != indexArg && !localVarBool( ui_hideBack ) && visArg ); \
+			decoration \
+		} \
+		itemDef \
+		{ \
+			style WINDOW_STYLE_SHADER \
+			rect (rectXArg) (rectYArg - 100) 180 90 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+			forecolor 1 1 1 1 \
+			exp material(imgArg) \
+			visible when( localVarInt( ui_highlight ) == indexArg && localVarString( ui_choicegroup ) == groupArg && !localVarBool( ui_hideBack ) && visArg ); \
+			decoration \
+		} \
+		itemDef \
+		{ \
+			style WINDOW_STYLE_SHADER \
+			rect (rectXArg) (rectYArg - 110) 180 5 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+			forecolor 1 1 1 1 \
+			exp material("gradient_top"); \
+			border 0 \
+			bordersize 0 \
+			bordercolor 0 0 0 0 \
+			visible when ( !localVarBool( ui_hideBack ) && visArg ); \
+			decoration \
+		} \
+		itemDef \
+		{ \
+			style WINDOW_STYLE_SHADER \
+			rect (rectXArg) (rectYArg - 5) 180 5 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+			forecolor 1 1 1 1 \
+			exp material("gradient_bottom"); \
+			border 0 \
+			bordersize 0 \
+			bordercolor 0 0 0 0 \
+			visible when ( !localVarBool( ui_hideBack ) && visArg ); \
+			decoration \
+		} \
+		itemDef \
+		{ \
+			type ITEM_TYPE_BUTTON \
+			rect (rectXArg) (rectYArg - 128) 180 146 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+			forecolor 1 1 1 1 \
+			visible when ( !localVarBool( ui_hideBack ) && visArg ); \
+			MENU_LOADOUT_SCRIPTACTIONS( indexArg, actionArg, groupArg, descArg, backArg ) \
+		} \
+		itemDef \
+		{ \
+			style WINDOW_STYLE_SHADER \
+			background "specialty_new" \
+			rect (rectXArg) (rectYArg - 128) 36 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+			backcolor 0.2 0.2 0.22 1 \
+			visible when ( !localVarBool( ui_hideBack ) && visArg && newVisArg ); \
+			decoration \
+		} 
+
+	#define MENU_LOADOUT_SCRIPTACTIONS( indexArg, actionArg, groupArg, descArg, backArg ) \
+		onFocus \
+		{ \
+			play "mouse_over"; \
+			setLocalVarInt ui_highlight indexArg; \
+			setLocalVarInt ui_highlighted_game backArg; \
+			setLocalVarString ui_choicegroup groupArg; \
+			setLocalVarString ui_game_desc descArg; \			
+			onFocusArg \
+		} \
+		leaveFocus \
+		{ \
+			setLocalVarInt ui_highlight 0; \
+			leaveFocusArg \
+		} \
+		action \
+		{ \
+			play "mouse_click"; \
+			actionArg; \
+		}	
+
+	#define PLAYER_CURRENT_XP (stat( 2301 ))
+
+	#undef LD_BTN_ORIGIN_X
+	#undef LD_BTN_ORIGIN_Y
+	#define LD_BTN_ORIGIN_X -275
+	#define LD_BTN_ORIGIN_Y 18
+	#define LD_BTN_SPACING_X 185
+	#define LD_BTN_SPACING_Y 18
+
+	#define MENU_LOADOUT_BUTTON(indexArg, columnArg, rowArg, idArg, imgArg, textArg, actionArg, xpArg) \
+		itemDef \
+		{ \
+			style 		WINDOW_STYLE_FILLED \
+			rect 		(LD_BTN_ORIGIN_X+(LD_BTN_SPACING_X*columnArg)) (LD_BTN_ORIGIN_Y+(LD_BTN_SPACING_Y*rowArg)) 180 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+			backcolor 	0.1 0.1 0.1 1 \
+			visible when(  !localVarBool( ui_hideBack )); \
+			decoration \
+		} \
+		itemDef \
+		{ \
+			style WINDOW_STYLE_FILLED \
+			rect (LD_BTN_ORIGIN_X+(LD_BTN_SPACING_X*columnArg)) (LD_BTN_ORIGIN_Y+(LD_BTN_SPACING_Y*rowArg)) 180 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+			exp 		rect W(180*(PLAYER_CURRENT_XP/xpArg)) \
+			backcolor 1 0.8 0.45 1 \
+			visible when(  !localVarBool( ui_hideBack ) && (PLAYER_CURRENT_XP < xpArg)); \
+			decoration \
+		} \
+		itemDef \
+		{ \
+			style 		WINDOW_STYLE_FILLED \
+			rect 		(LD_BTN_ORIGIN_X+(LD_BTN_SPACING_X*columnArg)) (LD_BTN_ORIGIN_Y+(LD_BTN_SPACING_Y*rowArg)) 180 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+			backcolor 	0 0.8 0 1 \
+			visible when(  !localVarBool( ui_hideBack ) && localVarInt(ui_loadout_index_highlight) == indexArg); \
+			decoration \
+		} \
+		itemDef \
+		{ \
+			style 		WINDOW_STYLE_SHADER \
+			rect 		(LD_BTN_ORIGIN_X+(LD_BTN_SPACING_X*columnArg)) (LD_BTN_ORIGIN_Y+(LD_BTN_SPACING_Y*rowArg)) 180 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+			forecolor 	1 1 1 1 \
+			exp 		material("gradient_top"); \
+			border 		0 \
+			bordersize 	0 \
+			bordercolor 0 0 0 0 \
+			visible		 when ( !localVarBool( ui_hideBack )); \
+			decoration \
+		} \
+		itemDef \
+		{ \
+			name		quit \
+			type		ITEM_TYPE_BUTTON \
+			style		WINDOW_STYLE_FILLED \
+			textstyle	ITEM_TEXTSTYLE_SHADOWED \
+			rect		(LD_BTN_ORIGIN_X+(LD_BTN_SPACING_X*columnArg)) (LD_BTN_ORIGIN_Y+(LD_BTN_SPACING_Y*rowArg)) 180 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+			exp			text(textArg) \
+			forecolor	1 1 1 1 \
+			textfont	9 \
+			textalign	ITEM_ALIGN_CENTER \
+			textalignY	18 \
+			textscale	0.375 \
+			visible		when(PLAYER_CURRENT_XP >= xpArg) \
+			mouseEnter    \
+			{   \
+				play "mouse_over";   \
+			} \
+			action   \
+			{ \
+				play "mouse_click"; \
+				setLocalVarString aftermath_weapon1 imgArg;\
+				setLocalVarInt ui_loadout_index_highlight indexArg; \
+				setdvar loadout_primary idArg; \
+				actionArg \
+			}  \
+		} \
+		itemDef \
+		{ \
+			name		quit \
+			type		ITEM_TYPE_TEXT \
+			style		WINDOW_STYLE_FILLED \
+			textstyle	ITEM_TEXTSTYLE_SHADOWED \
+			rect		(LD_BTN_ORIGIN_X+(LD_BTN_SPACING_X*columnArg)) (LD_BTN_ORIGIN_Y+(LD_BTN_SPACING_Y*rowArg)) 180 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+			exp			text(textArg) \
+			forecolor	0.2 0.2 0.2 1 \
+			textfont	9 \
+			textalign	ITEM_ALIGN_CENTER \
+			textalignY	18 \
+			textscale	0.375 \
+			visible		when(PLAYER_CURRENT_XP < xpArg) \
+			mouseEnter    \
+			{   \
+				play "mouse_over";   \
+			} \
+			action   \
+			{ \
+				play "mouse_click"; \
+			}  \
+		} \
+		itemDef \
+		{ \
+			style WINDOW_STYLE_SHADER \
+			background "specialty_locked" \
+			rect (LD_BTN_ORIGIN_X+(LD_BTN_SPACING_X*columnArg)+1) (LD_BTN_ORIGIN_Y+(LD_BTN_SPACING_Y*rowArg)+1) 16 16 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+			backcolor 1 1 1 1 \
+			visible when ( !localVarBool( ui_hideBack ) && (PLAYER_CURRENT_XP < xpArg)); \
+			decoration \
+		} \
+		itemDef \
+		{ \
+			rect (LD_BTN_ORIGIN_X+(LD_BTN_SPACING_X*columnArg)+1) (LD_BTN_ORIGIN_Y+(LD_BTN_SPACING_Y*rowArg)+1) 176 16 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+			style 0 \
+			border 0 \
+			ownerdraw 0 \
+			ownerdrawFlag 0 \
+			borderSize 0 \
+			foreColor 1 1 1 1 \
+			backColor 0 0 0 0 \
+			borderColor 0 0 0 0 \
+			outlineColor 0 0 0 0 \
+			decoration \
+			type 0 \
+			align 0 \
+			textAlign ITEM_ALIGN_MIDDLE_RIGHT \
+			textScale 0.2 \
+			textstyle	ITEM_TEXTSTYLE_SHADOWED \
+			textFont 1 \
+			feeder 0 \
+			visible when ( PLAYER_CURRENT_XP < xpArg ) \
+			exp text ( (xpArg-PLAYER_CURRENT_XP)+" XP left" ) \
+		} \
+
+#define MENU_LOADOUT_BUTTON2(indexArg, columnArg, rowArg, idArg, imgArg, textArg, actionArg, xpArg) \
+		itemDef \
+		{ \
+			style 		WINDOW_STYLE_FILLED \
+			rect 		(LD_BTN_ORIGIN_X+(LD_BTN_SPACING_X*columnArg)) (LD_BTN_ORIGIN_Y+(LD_BTN_SPACING_Y*rowArg)) 180 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+			backcolor 	0.1 0.1 0.1 1 \
+			visible when(  !localVarBool( ui_hideBack )); \
+			decoration \
+		} \
+		itemDef \
+		{ \
+			style WINDOW_STYLE_FILLED \
+			rect (LD_BTN_ORIGIN_X+(LD_BTN_SPACING_X*columnArg)) (LD_BTN_ORIGIN_Y+(LD_BTN_SPACING_Y*rowArg)) 180 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+			exp 		rect W(180*(PLAYER_CURRENT_XP/xpArg)) \
+			backcolor 1 0.8 0.45 1 \
+			visible when(  !localVarBool( ui_hideBack ) && (PLAYER_CURRENT_XP < xpArg)); \
+			decoration \
+		} \
+		itemDef \
+		{ \
+			style 		WINDOW_STYLE_FILLED \
+			rect 		(LD_BTN_ORIGIN_X+(LD_BTN_SPACING_X*columnArg)) (LD_BTN_ORIGIN_Y+(LD_BTN_SPACING_Y*rowArg)) 180 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+			backcolor 	0 0.8 0 1 \
+			visible when(  !localVarBool( ui_hideBack ) && localVarInt(ui_loadout_index_highlight2) == indexArg); \
+			decoration \
+		} \
+		itemDef \
+		{ \
+			style 		WINDOW_STYLE_SHADER \
+			rect 		(LD_BTN_ORIGIN_X+(LD_BTN_SPACING_X*columnArg)) (LD_BTN_ORIGIN_Y+(LD_BTN_SPACING_Y*rowArg)) 180 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+			forecolor 	1 1 1 1 \
+			exp 		material("gradient_top"); \
+			border 		0 \
+			bordersize 	0 \
+			bordercolor 0 0 0 0 \
+			visible		 when ( !localVarBool( ui_hideBack )); \
+			decoration \
+		} \
+		itemDef \
+		{ \
+			name		quit \
+			type		ITEM_TYPE_BUTTON \
+			style		WINDOW_STYLE_FILLED \
+			textstyle	ITEM_TEXTSTYLE_SHADOWED \
+			rect		(LD_BTN_ORIGIN_X+(LD_BTN_SPACING_X*columnArg)) (LD_BTN_ORIGIN_Y+(LD_BTN_SPACING_Y*rowArg)) 180 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+			exp			text(textArg) \
+			forecolor	1 1 1 1 \
+			textfont	9 \
+			textalign	ITEM_ALIGN_CENTER \
+			textalignY	18 \
+			textscale	0.375 \
+			visible		when(PLAYER_CURRENT_XP >= xpArg) \
+			mouseEnter    \
+			{   \
+				play "mouse_over";   \
+			} \
+			action   \
+			{ \
+				play "mouse_click"; \
+				setLocalVarString aftermath_weapon2 imgArg;\
+				setLocalVarInt ui_loadout_index_highlight2 indexArg; \
+				setdvar loadout_secondary idArg; \
+				actionArg \
+			}  \
+		} \
+		itemDef \
+		{ \
+			name		quit \
+			type		ITEM_TYPE_TEXT \
+			style		WINDOW_STYLE_FILLED \
+			textstyle	ITEM_TEXTSTYLE_SHADOWED \
+			rect		(LD_BTN_ORIGIN_X+(LD_BTN_SPACING_X*columnArg)) (LD_BTN_ORIGIN_Y+(LD_BTN_SPACING_Y*rowArg)) 180 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+			exp			text(textArg) \
+			forecolor	0.2 0.2 0.2 1 \
+			textfont	9 \
+			textalign	ITEM_ALIGN_CENTER \
+			textalignY	18 \
+			textscale	0.375 \
+			visible		when(PLAYER_CURRENT_XP < xpArg) \
+			mouseEnter    \
+			{   \
+				play "mouse_over";   \
+			} \
+			action   \
+			{ \
+				play "mouse_click"; \
+			}  \
+		} \
+		itemDef \
+		{ \
+			style WINDOW_STYLE_SHADER \
+			background "specialty_locked" \
+			rect (LD_BTN_ORIGIN_X+(LD_BTN_SPACING_X*columnArg)+1) (LD_BTN_ORIGIN_Y+(LD_BTN_SPACING_Y*rowArg)+1) 16 16 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+			backcolor 1 1 1 1 \
+			visible when ( !localVarBool( ui_hideBack ) && (PLAYER_CURRENT_XP < xpArg)); \
+			decoration \
+		} \
+		itemDef \
+		{ \
+			rect (LD_BTN_ORIGIN_X+(LD_BTN_SPACING_X*columnArg)+1) (LD_BTN_ORIGIN_Y+(LD_BTN_SPACING_Y*rowArg)+1) 176 16 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+			style 0 \
+			border 0 \
+			ownerdraw 0 \
+			ownerdrawFlag 0 \
+			borderSize 0 \
+			foreColor 1 1 1 1 \
+			backColor 0 0 0 0 \
+			borderColor 0 0 0 0 \
+			outlineColor 0 0 0 0 \
+			decoration \
+			type 0 \
+			align 0 \
+			textAlign ITEM_ALIGN_MIDDLE_RIGHT \
+			textScale 0.2 \
+			textstyle	ITEM_TEXTSTYLE_SHADOWED \
+			textFont 1 \
+			feeder 0 \
+			visible when ( PLAYER_CURRENT_XP < xpArg ) \
+			exp text ( (xpArg-PLAYER_CURRENT_XP)+" XP left" ) \
+		} \
+
+
+#define MENU_LOADOUT_BUTTON3(indexArg, columnArg, rowArg, idArg, imgArg, textArg, actionArg, xpArg) \
+		itemDef \
+		{ \
+			style 		WINDOW_STYLE_FILLED \
+			rect 		(LD_BTN_ORIGIN_X+(LD_BTN_SPACING_X*columnArg)) (LD_BTN_ORIGIN_Y+(LD_BTN_SPACING_Y*rowArg)) 180 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+			backcolor 	0.1 0.1 0.1 1 \
+			visible when(  !localVarBool( ui_hideBack )); \
+			decoration \
+		} \
+		itemDef \
+		{ \
+			style WINDOW_STYLE_FILLED \
+			rect (LD_BTN_ORIGIN_X+(LD_BTN_SPACING_X*columnArg)) (LD_BTN_ORIGIN_Y+(LD_BTN_SPACING_Y*rowArg)) 180 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+			exp 		rect W(180*(PLAYER_CURRENT_XP/xpArg)) \
+			backcolor 1 0.8 0.45 1 \
+			visible when(  !localVarBool( ui_hideBack ) && (PLAYER_CURRENT_XP < xpArg)); \
+			decoration \
+		} \
+		itemDef \
+		{ \
+			style 		WINDOW_STYLE_FILLED \
+			rect 		(LD_BTN_ORIGIN_X+(LD_BTN_SPACING_X*columnArg)) (LD_BTN_ORIGIN_Y+(LD_BTN_SPACING_Y*rowArg)) 180 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+			backcolor 	0 0.8 0 1 \
+			visible when(  !localVarBool( ui_hideBack ) && localVarInt(ui_loadout_index_highlight3) == indexArg); \
+			decoration \
+		} \
+		itemDef \
+		{ \
+			style 		WINDOW_STYLE_SHADER \
+			rect 		(LD_BTN_ORIGIN_X+(LD_BTN_SPACING_X*columnArg)) (LD_BTN_ORIGIN_Y+(LD_BTN_SPACING_Y*rowArg)) 180 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+			forecolor 	1 1 1 1 \
+			exp 		material("gradient_top"); \
+			border 		0 \
+			bordersize 	0 \
+			bordercolor 0 0 0 0 \
+			visible		 when ( !localVarBool( ui_hideBack )); \
+			decoration \
+		} \
+		itemDef \
+		{ \
+			name		quit \
+			type		ITEM_TYPE_BUTTON \
+			style		WINDOW_STYLE_FILLED \
+			textstyle	ITEM_TEXTSTYLE_SHADOWED \
+			rect		(LD_BTN_ORIGIN_X+(LD_BTN_SPACING_X*columnArg)) (LD_BTN_ORIGIN_Y+(LD_BTN_SPACING_Y*rowArg)) 180 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+			exp			text(textArg) \
+			forecolor	1 1 1 1 \
+			textfont	9 \
+			textalign	ITEM_ALIGN_CENTER \
+			textalignY	18 \
+			textscale	0.375 \
+			visible		when(PLAYER_CURRENT_XP >= xpArg) \
+			mouseEnter    \
+			{   \
+				play "mouse_over";   \
+			} \
+			action   \
+			{ \
+				play "mouse_click"; \
+				setLocalVarString loadout_perk imgArg;\
+				setLocalVarInt ui_loadout_index_highlight3 indexArg; \\
+				setdvar loadout_perk idArg; \
+				actionArg \
+			}  \
+		} \
+		itemDef \
+		{ \
+			name		quit \
+			type		ITEM_TYPE_TEXT \
+			style		WINDOW_STYLE_FILLED \
+			textstyle	ITEM_TEXTSTYLE_SHADOWED \
+			rect		(LD_BTN_ORIGIN_X+(LD_BTN_SPACING_X*columnArg)) (LD_BTN_ORIGIN_Y+(LD_BTN_SPACING_Y*rowArg)) 180 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+			exp			text(textArg) \
+			forecolor	0.2 0.2 0.2 1 \
+			textfont	9 \
+			textalign	ITEM_ALIGN_CENTER \
+			textalignY	18 \
+			textscale	0.375 \
+			visible		when(PLAYER_CURRENT_XP < xpArg) \
+			mouseEnter    \
+			{   \
+				play "mouse_over";   \
+			} \
+			action   \
+			{ \
+				play "mouse_click"; \
+			}  \
+		} \
+		itemDef \
+		{ \
+			style WINDOW_STYLE_SHADER \
+			background "specialty_locked" \
+			rect (LD_BTN_ORIGIN_X+(LD_BTN_SPACING_X*columnArg)+1) (LD_BTN_ORIGIN_Y+(LD_BTN_SPACING_Y*rowArg)+1) 16 16 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+			backcolor 1 1 1 1 \
+			visible when ( !localVarBool( ui_hideBack ) && (PLAYER_CURRENT_XP < xpArg)); \
+			decoration \
+		} \
+		itemDef \
+		{ \
+			rect (LD_BTN_ORIGIN_X+(LD_BTN_SPACING_X*columnArg)+1) (LD_BTN_ORIGIN_Y+(LD_BTN_SPACING_Y*rowArg)+1) 176 16 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+			style 0 \
+			border 0 \
+			ownerdraw 0 \
+			ownerdrawFlag 0 \
+			borderSize 0 \
+			foreColor 1 1 1 1 \
+			backColor 0 0 0 0 \
+			borderColor 0 0 0 0 \
+			outlineColor 0 0 0 0 \
+			decoration \
+			type 0 \
+			align 0 \
+			textAlign ITEM_ALIGN_MIDDLE_RIGHT \
+			textScale 0.2 \
+			textstyle	ITEM_TEXTSTYLE_SHADOWED \
+			textFont 1 \
+			feeder 0 \
+			visible when ( PLAYER_CURRENT_XP < xpArg ) \
+			exp text ( (xpArg-PLAYER_CURRENT_XP)+" XP left" ) \
+		} \
+
+	
+		//DUKIP - Replace background with your own material!
+		/*
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			rect				FULLSCREEN_WIDE
+			background		"nzr_main_menu"
+			forecolor		0.6 0.6 0.6 0.7
+			visible			1
+			decoration
+		}*/
+
+		// background
+		#include "ui/bg.inc"
+
+		#define SET_DEFAULT_PRIMARY \
+			setLocalVarString aftermath_weapon1 "hud_knife_bo2"; \
+			setLocalVarInt ui_loadout_index_highlight 0; \
+			exec "set loadout_primary 0"; \
+
+		#define SET_DEFAULT_SECONDARY \
+			setLocalVarString aftermath_weapon2 "hud_knife_bo2"; \
+			setLocalVarInt ui_loadout_index_highlight2 0; \
+			exec "set loadout_secondary 0"; \
+
+		#define SET_DEFAULT_PERK \
+			setLocalVarString loadout_perk "specialty_nothing"; \
+			setLocalVarInt ui_loadout_index_highlight3 0; \
+			exec "set loadout_perk 0"; \
+
+
+		CHOICE_MENU_TITLE( "LOADOUT" )
+
+		// draws signin status
+		SIGNIN_STATUS
+		ONLINE_OFFLINE_BUTTON
+
+		//MENU_SP_BUTTON( NUMBER, rectXArg, rectYArg, IMAGE HIGHLIGHTED, IMAGE NOT HIGHLIGHTED, TEXT ON TOP, WHAT TO DO WHEN PRESSED, DESCRIPTION, backArg, groupArg ) \
+		//MENU_SP_BUTTON( indexArg, rectXArg, rectYArg, imgArg, blurArg, textArg, actionArg, descArg, backArg, groupArg )
+		//For button 2, I had to reverse the images for some reason the materials were being set wrong.
+		MENU_LOADOUT_BOX(1, -275, LOADOUT_BOX_ORIGIN_Y , localVarString(aftermath_weapon1), localVarString(aftermath_weapon1), "PRIMARY", SET_DEFAULT_PRIMARY, "", "1", "main" , 1, 0)   
+		MENU_LOADOUT_BOX(2, -90, LOADOUT_BOX_ORIGIN_Y , localVarString(aftermath_weapon2), localVarString(aftermath_weapon2), "SECONDARY", SET_DEFAULT_SECONDARY, "", "2", "main" ,1,0)
+		MENU_LOADOUT_BOX(3, 95, LOADOUT_BOX_ORIGIN_Y , localVarString(loadout_perk), localVarString(loadout_perk), "PERK", SET_DEFAULT_PERK, "", "3", "main" ,1,0)
+		//MENU_LOADOUT_BUTTON( COLUMN, ROW, ID TO SET IN STAT, MATERIAL FOR HUD ICON, NAME, ADDITIONAL ACTIONS, XP NEEDED )
+		// Primaries
+		MENU_LOADOUT_BUTTON(1,0,0,1,"hud_ksg","KSG",;,0)
+		MENU_LOADOUT_BUTTON(2,0,1,2,"hud_sa85","FAL OSW",;,7680)
+		MENU_LOADOUT_BUTTON(3,0,2,3,"hud_scar_h","Scar-H",;,17480)
+		// Secondaries
+		MENU_LOADOUT_BUTTON2(1,1,0,1,"hud_1911_bo2","1911",;,0)
+		MENU_LOADOUT_BUTTON2(2,1,1,2,"hud_fn57","FiveSeven",;,7680)
+		MENU_LOADOUT_BUTTON2(3,1,2,3,"hud_fnp45","Tac-45",;,12000)
+		// Perks
+		MENU_LOADOUT_BUTTON3(1,2,0,1,"specialty_bulletaccuracy","Deadshot",;,0)
+		MENU_LOADOUT_BUTTON3(2,2,1,2,"specialty_bulletaccuracy","Quick Revive",;,10830)
+		MENU_LOADOUT_BUTTON3(3,2,2,3,"specialty_bulletaccuracy","Sleight of Hand",;,22430 )
+		MENU_LOADOUT_BUTTON3(4,2,3,4,"specialty_bulletaccuracy","Double Tap",;,39150)
+		MENU_LOADOUT_BUTTON3(5,2,4,5,"specialty_bulletaccuracy","Scavenger",;,61110)
+		MENU_LOADOUT_BUTTON3(6,2,5,6,"specialty_bulletaccuracy","Juggernaut",;,148680)
+		//MENU_LOADOUT_BOX(3, 95, LOADOUT_BOX_ORIGIN_Y , "menu_button_options", "menu_button_options_blur", "OPTIONS", ;, "", "3", "main",1,0)
+		/*
+		itemDef
+		{
+			rect 0 346 640 24 4 1
+			style 3
+			border 0
+			ownerdraw 0
+			ownerdrawFlag 0
+			borderSize 0
+			foreColor 0 0 0 1
+			backColor 0 0 0 0
+			borderColor 0 0 0 0
+			outlineColor 0 0 0 0
+			background line_horizontal
+			decoration 
+			type 0
+			align 0
+			textAlign 0
+			textAlignX 0
+			textAlignY 0
+			textScale 0.55
+			textStyle 0
+			textFont 0
+			feeder 0
+			visible 1
+			visible when ( 1  )
+		}
+		*/
+/*
+ 		itemDef
+ 		{
+ 			rect			-130 -180 256 128 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+ 			forecolor		1 1 1 1
+ 			style			WINDOW_STYLE_SHADER
+ 			background		"aftermath_logo"
+ 			visible			when( !localVarBool( ui_hideBack ) );
+ 			decoration
+ 		}
+*/
+ 		#undef TEXT_SCROLL_TIME
+		#define TEXT_SCROLL_TIME 15000
+		/*
+		itemDef
+		{
+			name			"newsfeed"
+			style			ITEM_TYPE_TEXT
+			rect			900 0 900 16 1 3
+			exp				rect X((1200) - ((float(milliseconds() % TEXT_SCROLL_TIME) / TEXT_SCROLL_TIME) * (3000)))
+			exp				text("^1BREAKING NEWS^7: It is being suggested that the latest politics assassinations were pulled out by Cordis Die. Could it be the beggining of something worse?")
+			forecolor		1 1 1 1
+			textfont		1
+			textscale		0.3
+			visible			1
+			decoration
+		}*/
+
+		itemDef
+		{
+			name		quit
+			type		ITEM_TYPE_BUTTON
+			style		WINDOW_STYLE_FILLED
+			textstyle	ITEM_TEXTSTYLE_SHADOWED
+			rect		100 400 640 24 1 1
+			text		"@MENU_BACK"
+			forecolor	1 1 1 1
+			textfont	9
+			textalign	ITEM_ALIGN_CENTER
+			textalignY	18
+			textscale	0.375
+			visible		1
+			mouseEnter   
+			{  
+				play "mouse_over";  
+			}
+			action  
+			{
+				play "mouse_click";
+				close victoryscreen; 
+			} 
+		}
+			itemDef
+		{
+			name		quit
+			type		ITEM_TYPE_BUTTON
+			style		WINDOW_STYLE_FILLED
+			textstyle	ITEM_TEXTSTYLE_SHADOWED
+			rect		100 380 640 24 1 1
+			text		"APPLY"
+			forecolor	1 1 1 1
+			textfont	9
+			textalign	ITEM_ALIGN_CENTER
+			textalignY	18
+			textscale	0.375
+			visible		1
+			mouseEnter   
+			{  
+				play "mouse_over";  
+			}
+			action  
+			{
+				play "mouse_click";
+				exec "set ui_autoContinue 1";
+				exec "devmap loadout_apply";
+			} 
+		}
+
+		#include "ui/safearea.menu"
+	}
+
+	
+	
+}
+

@@ -1,0 +1,558 @@
+#include "ui/menudef.h"
+
+
+#define FS_LD_MAPNAME "THE FOREST" // MAP NAME
+#define FS_LINE1 "Central Europe" // Best suitable for location
+#define FS_LINE2 "15th of April, 2026"		// Best suitable for date
+
+
+
+#define ORIGIN_DIY_TITLE_HIDEF		42 300
+#define ORIGIN_DIY_FRAME_HIDEF		35 300
+#define ORIGIN_DIY_HIDEF			37 320
+
+#define ORIGIN_DIY_TITLE_STDEF		22 300
+#define ORIGIN_DIY_FRAME_STDEF		15 300
+#define ORIGIN_DIY_STDEF			17 320
+
+#define NOT_DEVELOPMENT				( !dvarbool( cg_development ) && !dvarbool ( ui_shipping_cheats ) )
+
+{
+	menuDef 
+	{
+		name			"briefing"
+		style			WINDOW_STYLE_FILLED
+		fullScreen		0
+		rect			0 0 640 480
+		focusColor		COLOR_FOCUSED
+		backcolor		0 0 0 0
+		visible			1
+#ifdef NOT_DEVELOPMENT
+		onEsc{ }
+#else
+		onEsc{}
+#endif // #ifdef NOT_DEVELOPMENT
+
+		// background
+		itemDef 
+		{
+			style			WINDOW_STYLE_FILLED
+			rect			FULLSCREEN_WIDE
+			backcolor		0 0 0 1
+			visible			1
+			background		"white"
+			decoration
+		}
+
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			FULLSCREEN_WIDE
+			backcolor		0 0 0 1
+			background		"$levelBriefing"
+			visible			when( ( dvarbool(onlinegame) || dvarbool(systemlink) ) && dvarbool(widescreen) )
+			decoration
+		}
+
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			FULLSCREEN
+			backcolor		0 0 0 1
+			background		"$levelBriefing"
+			visible			when( ( dvarbool(onlinegame) || dvarbool(systemlink) ) && !dvarbool(widescreen) )
+			decoration
+		}
+
+		itemDef 
+		{
+			style			WINDOW_STYLE_FILLED
+			rect			FULLSCREEN_WIDE
+			backcolor		1 1 1 1
+			visible			when( !dvarbool(onlinegame) && !dvarbool(systemlink) )
+			background		cinematic
+			ownerdraw		UI_CINEMATIC
+			decoration
+		}
+/*
+		itemDef
+		{
+			name		"ray_overlay_dirt"
+			style		WINDOW_STYLE_SHADER
+			forecolor	1 1 1 1
+			rect		-855 -480 855 480
+			background	"aitf_load"
+			visible		1
+			decoration
+		}*/
+		itemDef
+		{
+			type			ITEM_TYPE_TEXT
+			#ifdef PC
+				rect			-250 378 500 0 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_TOP
+			#else
+				rect			-225 342 450 0 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_TOP
+			#endif			
+			textcinematicsubtitle
+			textfont		UI_FONT_DEFAULT
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textscale		0.38
+			textalign		ITEM_ALIGN_TOP_CENTER
+			visible			1
+			decoration
+			autowrapped
+		}		
+
+		itemDef 
+		{
+			name			"profile"
+			rect			40 40 560 400
+			align			HUD_HORIZONTAL
+			ownerdraw		UI_LOADPROFILING
+			visible			1
+			decoration
+		}
+
+		itemDef 
+		{
+			name			"load_status_screen"
+			rect			-270 300 260 15 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_TOP
+			backcolor		0.08627 0.1098 0.1098 1
+			align			HUD_HORIZONTAL
+			textfont		UI_FONT_DEFAULT
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textscale		0.30
+			textalign		ITEM_ALIGN_TOP_CENTER
+			ownerdraw		UI_LOAD_STATUS_SCREEN
+			visible			when( dvarbool( onlinegame ) || dvarbool( systemlink )  )
+			decoration
+		}
+
+		#include "ui/safearea.menu"
+
+#define LOADBAR_IMAGE_XSIZE 192
+#define LOADBAR_IMAGE_YSIZE 48
+
+		// LoadBar for Solo and Splitscreen
+
+		itemDef 
+		{
+			name			"loadbar"
+			style			WINDOW_STYLE_LOADBAR
+			rect			-300 444 600 4 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_FULLSCREEN
+			forecolor		1 0.5 0 1
+	 		background		"white"
+			visible			when( iscinematicfinished() != 1 && !dvarbool( onlinegame ) && !dvarbool( systemlink ) )
+			decoration
+		}
+
+		// This is the back ground for the loading bar
+		itemDef 
+		{
+			name			"loadbar_bg"
+			style			WINDOW_STYLE_FILLED
+			rect			-300 444 600 4 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_FULLSCREEN
+			backcolor		0.4 0.4 0.4 0.4
+	 		background		"white"
+			visible			when( iscinematicfinished() != 1 && !dvarbool( onlinegame ) && !dvarbool( systemlink ) )
+			decoration
+		}
+		itemDef
+		{
+			type			ITEM_TYPE_TEXT
+			visible			1
+			rect			0 0 150 200
+			origin 			20 442
+			forecolor		.8 .8 .8 1
+			text			"Loading..."
+			textfont		UI_FONT_OBJECTIVE
+			textscale		.28
+			visible 		when( iscinematicfinished() != 1 && !dvarbool(onlinegame) && !dvarbool(systemlink) )
+			decoration
+		}
+		itemDef
+		{
+			type			ITEM_TYPE_TEXT
+			visible			1
+			rect			0 0 150 200
+			origin 			20 40
+			forecolor		1 .5 0 1
+			text			FS_LD_MAPNAME
+			textfont		UI_FONT_OBJECTIVE
+			textscale		.75
+			decoration
+		}
+		itemDef
+		{
+			type			ITEM_TYPE_TEXT
+			visible			1
+			rect			0 0 150 200
+			origin 			20 60
+			forecolor		1 1 1 1
+			text			FS_LINE1
+			textfont		UI_FONT_OBJECTIVE
+			textscale		.5
+			decoration
+		}
+		itemDef
+		{
+			type			ITEM_TYPE_TEXT
+			visible			1
+			rect			0 0 150 200
+			origin 			20 80
+			forecolor		1 1 1 1
+			text			FS_LINE2
+			textfont		UI_FONT_OBJECTIVE
+			textscale		.5
+			decoration
+		}
+		// New Loadbars for XboxLive and Systemlink Games
+		itemDef 
+		{
+			name			"new_loadbar"
+			style			WINDOW_STYLE_LOADBAR
+			rect			-260 259 120 2 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_TOP
+			forecolor		1 1 1 1
+	 		background		"menu_white_line"
+			visible			when( dvarbool( onlinegame ) || dvarbool( systemlink ) )
+			decoration
+		}
+		itemDef 
+		{
+			name			"new_loadbar"
+			style			WINDOW_STYLE_LOADBAR
+			rect			260 259 -120 2 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_TOP
+			forecolor		1 1 1 1
+	 		background		"menu_white_line"
+			visible			when( dvarbool( onlinegame ) || dvarbool( systemlink ) )
+			decoration
+		}
+
+		// This is the back ground for the loading bar
+		itemDef 
+		{
+			name			"new_loadbar_bg"
+			style			WINDOW_STYLE_FILLED
+			rect			-260 259 240 1 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_TOP
+			backcolor		0.4 0.4 0.4 0.4
+	 		background		"menu_white_line"
+			visible			when( dvarbool( onlinegame ) || dvarbool( systemlink ) )
+			decoration
+		}
+
+		// The Intel Box for Hi Def
+		itemDef 
+		{ 
+			style			WINDOW_STYLE_SHADER 
+			rect			0 0 260 4 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_BOTTOM
+			origin 			-285 -136
+			forecolor		0 0 0 0.5 
+			exp				material( "menu_white_line_faded" ); 
+			visible			when( dvarbool( hiDef ) && ( dvarbool( onlinegame ) || dvarbool( systemlink ) ) )
+			decoration 
+		}
+
+		itemDef
+		{
+			
+			style			WINDOW_STYLE_SHADER
+			rect			ORIGIN_DIY_FRAME_HIDEF 283 98 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP
+			background		"white"
+			forecolor		0 0 0 0.6
+			border			WINDOW_BORDER_HORZ
+			bordersize		1
+			bordercolor		0.5 0.5 0.5 0.3
+			visible			when( dvarbool( hiDef ) && ( dvarbool( onlinegame ) || dvarbool( systemlink ) ) )
+			decoration
+		}
+
+		itemDef
+		{
+			rect			ORIGIN_DIY_HIDEF 270 100 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP
+			type			ITEM_TYPE_BUTTON
+			textfont		UI_FONT_OBJECTIVE
+			dvar			"didyouknow"
+			textalign 		ITEM_ALIGN_LEFT
+			textscale		TEXTSIZE_DEFAULT
+			forecolor		1 1 1 1
+			backcolor		0 0 0 0
+			textalignx 		0
+			textaligny 		-10   
+			origin			5 10
+			visible			when( dvarbool( hiDef ) && ( dvarbool( onlinegame ) || dvarbool( systemlink ) ) )
+			decoration
+			autowrapped
+		}
+		// The Intel Box for Standard Def
+		itemDef 
+		{ 
+			style			WINDOW_STYLE_SHADER 
+			rect			0 0 200 4 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_BOTTOM
+			origin 			-285 -136
+			forecolor		0 0 0 0.5 
+			exp				material( "menu_white_line_faded" ); 
+			visible			when( !dvarbool( hiDef ) && ( dvarbool( onlinegame ) || dvarbool( systemlink ) ) )
+			decoration 
+		}
+
+		itemDef
+		{
+			
+			style			WINDOW_STYLE_SHADER
+			rect			ORIGIN_DIY_FRAME_STDEF 223 98 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP
+			background		"white"
+			forecolor		0 0 0 0.6
+			border			WINDOW_BORDER_HORZ
+			bordersize		1
+			bordercolor		0.5 0.5 0.5 0.3
+			visible			when( !dvarbool( hiDef ) && ( dvarbool( onlinegame ) || dvarbool( systemlink ) ) )
+			decoration
+		}
+
+		itemDef
+		{
+			rect			ORIGIN_DIY_STDEF 210 100 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP
+			type			ITEM_TYPE_BUTTON
+			textfont		UI_FONT_OBJECTIVE
+			dvar			"didyouknow"
+			textalign 		ITEM_ALIGN_LEFT
+			textscale		TEXTSIZE_DEFAULT
+			forecolor		1 1 1 1
+			backcolor		0 0 0 0
+			textalignx 		0
+			textaligny 		-10   
+			origin			5 10
+			visible			when( !dvarbool( hiDef ) && ( dvarbool( onlinegame ) || dvarbool( systemlink ) ) )
+			decoration
+			autowrapped
+		}
+	}
+	menuDef
+	{
+		name				"pregame"
+  		rect				0 0 640 480
+		fullScreen			1
+		focusColor			COLOR_FOCUSED
+		backcolor			0 0 0 0
+		style				WINDOW_STYLE_FILLED
+		onEsc
+		{
+			uiScript playerstart
+		}
+
+		onOpen
+		{
+			//setdvar ui_SaveLoadVisible "0";
+			//setfocus press_to_skip;
+		}
+
+
+		itemDef 
+		{
+			style			WINDOW_STYLE_FILLED
+			rect			FULLSCREEN_WIDE
+			backcolor		0 0 0 1
+			visible			1
+			background		"white"
+			decoration
+		}
+		
+
+		itemDef 
+		{
+			style			WINDOW_STYLE_FILLED
+			rect			FULLSCREEN_WIDE
+			backcolor		1 1 1 1
+			visible			1
+			background		cinematic
+			ownerdraw		UI_CINEMATIC
+			decoration
+		}
+		
+		itemDef
+		{
+			type			ITEM_TYPE_TEXT
+			#ifdef PC
+				rect			-250 388 500 0 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_TOP
+			#else
+				rect			-225 352 450 0 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_TOP
+			#endif
+			textcinematicsubtitle
+			textfont		UI_FONT_DEFAULT
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textscale		0.38
+			textalign		ITEM_ALIGN_TOP_CENTER
+			visible			1
+			decoration
+			autowrapped
+		}		
+		
+		itemDef
+		{
+			name			"profile"
+			visible			1
+			rect			40 40 560 400
+			ownerdraw		UI_LOADPROFILING
+			decoration
+		}
+
+		// the button
+		// Text message saying you should click to continue
+
+		itemDef
+		{
+			type			ITEM_TYPE_BUTTON
+			style			WINDOW_STYLE_FILLED
+			textscale		TEXTSIZE_TITLE
+			border			0
+			bordercolor		1 1 1 1
+			rect			-128 445 896 45
+			textalign		ITEM_ALIGN_TOP_CENTER
+			textaligny		28
+			forecolor		1 1 1 1
+			backcolor		0 0 0 0
+			visible			1
+			decoration
+		}
+
+				itemDef
+		{
+			type			ITEM_TYPE_TEXT
+			visible			1
+			rect			0 0 150 200
+			origin 			20 40
+			forecolor		1 .5 0 1
+			text			FS_LD_MAPNAME
+			textfont		UI_FONT_OBJECTIVE
+			textscale		.75
+			decoration
+		}
+		itemDef
+		{
+			type			ITEM_TYPE_TEXT
+			visible			1
+			rect			0 0 150 200
+			origin 			20 60
+			forecolor		1 1 1 1
+			text			FS_LINE1
+			textfont		UI_FONT_OBJECTIVE
+			textscale		.5
+			decoration
+		}
+		itemDef
+		{
+			type			ITEM_TYPE_TEXT
+			visible			1
+			rect			0 0 150 200
+			origin 			20 80
+			forecolor		1 1 1 1
+			text			FS_LINE2
+			textfont		UI_FONT_OBJECTIVE
+			textscale		.5
+			decoration
+		}
+		
+#ifdef CONSOLE
+		itemDef
+		{
+			type			ITEM_TYPE_BUTTON
+			text			""
+			style			WINDOW_STYLE_FILLED
+			textscale		TEXTSIZE_TITLE
+			border			0
+			bordercolor		1 1 1 1
+			rect			0 418 640 45
+			textalign		ITEM_ALIGN_TOP_CENTER
+			textaligny		4
+			forecolor		1 1 1 1
+			backcolor		0 0 0 0
+			visible			when ( VIS_PRESS_START_TO_CONTINUE && ( dvarString( mapname ) != "credits" ) && ( dvarInt( loc_language ) != 0 ) );
+			decoration
+		}
+		itemDef
+		{
+			type			ITEM_TYPE_BUTTON
+			text			""
+			style			WINDOW_STYLE_FILLED
+			textscale		TEXTSIZE_TITLE
+			border			0
+			bordercolor		1 1 1 1
+			rect			0 418 640 45
+			textalign		ITEM_ALIGN_TOP_CENTER
+			textaligny		4
+			forecolor		1 1 1 1
+			backcolor		0 0 0 0
+			visible			when ( iscinematicfinished() == 1 && ( dvarString( mapname ) != "credits" ) && VIS_PRESS_START && ( dvarInt( loc_language ) != 0 ) );
+			decoration
+		}
+#endif // #ifdef CONSOLE
+#ifdef PC
+		itemDef
+		{
+			type			ITEM_TYPE_BUTTON
+			exp				text(""+KeyBinding("+attack"))
+			style			WINDOW_STYLE_FILLED
+			textscale		TEXTSIZE_SMALL
+			border			0
+			bordercolor		1 1 1 1
+			rect			16 380 640 45
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textalign		ITEM_ALIGN_BOTTOM_RIGHT
+			textaligny		4
+			forecolor		1 1 1 1
+			backcolor		0 0 0 0
+			visible when ( !dvarbool( ui_isSaving ) && dvarstring( credits ) != "1" && VIS_PRESS_START );
+			decoration
+		}
+		itemDef
+		{
+			type			ITEM_TYPE_BUTTON
+			text			""
+			style			WINDOW_STYLE_FILLED
+			textscale		TEXTSIZE_SMALL
+			border			0
+			bordercolor		1 1 1 1
+			rect			0 368 640 45
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textalign		ITEM_ALIGN_TOP_CENTER
+			textaligny		4
+			forecolor		1 1 1 0.5
+			backcolor		0 0 0 0
+			visible when ( !dvarbool( ui_isSaving ) && dvarstring( mapname ) == "credits" && VIS_PRESS_START );
+			decoration
+		}
+#endif 
+
+		itemDef
+		{
+			name			press_to_skip
+			type			ITEM_TYPE_BUTTON
+			rect			-130 -2 900 486
+			style			WINDOW_STYLE_EMPTY
+			visible			when( dvarString( mapname ) != "outro" )
+			forecolor		0 0 0 0
+			backcolor		0 0 0 0
+			action
+			{
+				uiScript playerstart
+			}
+			execkeyint BUTTON_A
+			{
+				uiScript playerstart
+			}
+			execkeyint BUTTON_B
+			{
+				uiScript playerstart
+			}
+			execkeyint BUTTON_START
+			{
+				uiScript playerstart
+			}
+		}
+
+#include "ui/safearea.menu"
+
+
+	}
+}
+
